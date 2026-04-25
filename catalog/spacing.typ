@@ -190,10 +190,10 @@
   node((1, 0), "b", shape: fletcher.shapes.rect, fill: palette.purple.fill, stroke: tokens.stroke-default + palette.purple.stroke, inset: 8pt),
   node((0, 1), "c", shape: fletcher.shapes.rect, fill: palette.purple.fill, stroke: tokens.stroke-default + palette.purple.stroke, inset: 8pt),
   node((1, 1), "d", shape: fletcher.shapes.rect, fill: palette.purple.fill, stroke: tokens.stroke-default + palette.purple.stroke, inset: 8pt),
-  edge((0, 0), (1, 0), "->"),
-  edge((0, 0), (0, 1), "->"),
-  edge((0, 1), (1, 1), "->"),
-  edge((1, 0), (1, 1), "->"),
+  edge((0, 0), (1, 0), "->", stroke: tokens.stroke-default + palette.ink),
+  edge((0, 0), (0, 1), "->", stroke: tokens.stroke-default + palette.ink),
+  edge((0, 1), (1, 1), "->", stroke: tokens.stroke-default + palette.ink),
+  edge((1, 0), (1, 1), "->", stroke: tokens.stroke-default + palette.ink),
 )
 
 #grid(

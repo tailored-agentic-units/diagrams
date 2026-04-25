@@ -100,24 +100,27 @@
 
 #v(tokens.gap-structured-text)
 #text(size: tokens.size-caption, fill: palette.ink-muted, style: "italic",
-  "Same Fletcher rect, but the body stacks a coloured header bar above the label, or overlays a corner ribbon. Composition lives at the Typst content level — no custom shape function required.")
+  "Same Fletcher rect, but the body splits across a header / divider / body block, overlays a corner ribbon, or grafts an icon block onto the leading edge. Composition lives at the Typst content level — no custom shape function required.")
 #v(tokens.space-between-shapes)
 
-// Composite 1 — horizontal header bar above the label.
-// The outer box gets an explicit width so the bar's `width: 100%` resolves
-// to a meaningful value. Bar's top corners match the host's corner-radius.
-#let header-bar-node(hue, title, kind) = diagram(
+// Composite 1 — title block on top, separator rule, body content below.
+// Mirrors UML class notation: identity above, payload below. The line is
+// a `tokens.stroke-thin` divider in the host hue so it reads as a structural
+// boundary, not just decoration.
+#let header-bar-node(hue, title, kind, body) = diagram(
   spacing: (0pt, 0pt),
   node((0, 0),
-    box(width: 130pt,
+    box(width: 150pt,
       stack(dir: ttb, spacing: 0pt,
-        rect(width: 100%, height: 6pt, fill: hue.stroke, stroke: none,
-          radius: (top-left: tokens.radius-shape, top-right: tokens.radius-shape)),
         block(width: 100%, inset: tokens.pad-inside-shape,
           stack(dir: ttb, spacing: tokens.gap-structured-text,
             text(size: tokens.size-body, weight: tokens.weight-bold, fill: palette.ink, title),
             text(size: tokens.size-label, weight: tokens.weight-light, fill: hue.ink, style: "italic", "(" + kind + ")"),
           ),
+        ),
+        line(length: 100%, stroke: tokens.stroke-thin + hue.divider),
+        block(width: 100%, inset: tokens.pad-inside-shape,
+          text(size: tokens.size-label, fill: palette.ink-muted, body),
         ),
       ),
     ),
@@ -129,27 +132,44 @@
   ),
 )
 
-// Composite 2 — corner ribbon: triangle pointing toward the top-right corner.
-// The triangle's apex sits at the host's top-right; the rounded host corner
-// frames it. A small inset (3pt) keeps the apex inside the corner-radius arc.
+// Composite 2 — corner ribbon: a right-triangle that nests into the host's
+// top-right rounded corner. The apex (where the top and right edges meet)
+// is replaced by a quarter-arc whose radius matches the host's corner-radius,
+// so the ribbon slots flush into the corner instead of overshooting it.
+#let _kappa = 0.5522847498  // bezier approximation of a quarter circle
+#let corner-ribbon(size, radius, color) = {
+  let s = size
+  let r = radius
+  let k = r * _kappa
+  curve(
+    fill: color, stroke: none,
+    curve.move((0pt, 0pt)),                                                       // top-left along host top edge
+    curve.line((s - r, 0pt)),                                                     // top edge up to arc start
+    curve.cubic((s - r + k, 0pt), (s, r - k), (s, r)),                            // quarter-arc apex
+    curve.line((s, s)),                                                            // right edge down to bottom-right
+    curve.close(),
+  )
+}
+
+// Same trick as icon-block-node: node inset is 0pt so the body content fills
+// the node edge-to-edge, the title block carries its own padding, and the
+// ribbon's place(top + right) lands on the host's actual top-right corner
+// instead of being inset by pad-inside-shape.
 #let ribbon-node(hue, title, kind, ribbon-color) = diagram(
   spacing: (0pt, 0pt),
   node((0, 0),
     box(
-      stack(dir: ttb, spacing: tokens.gap-structured-text,
-        text(size: tokens.size-body, weight: tokens.weight-bold, fill: palette.ink, title),
-        text(size: tokens.size-label, weight: tokens.weight-light, fill: hue.ink, style: "italic", "(" + kind + ")"),
-      ) + place(top + right, dx: -2pt, dy: 2pt,
-        polygon(fill: ribbon-color, stroke: none,
-          (0pt, 0pt),       // anchor at top-right corner (the apex)
-          (-14pt, 0pt),     // along top edge
-          (0pt, 14pt),      // along right edge
-        )),
+      block(inset: tokens.pad-inside-shape,
+        stack(dir: ttb, spacing: tokens.gap-structured-text,
+          text(size: tokens.size-body, weight: tokens.weight-bold, fill: palette.ink, title),
+          text(size: tokens.size-label, weight: tokens.weight-light, fill: hue.ink, style: "italic", "(" + kind + ")"),
+        ),
+      ) + place(top + right, corner-ribbon(14pt, tokens.radius-shape, ribbon-color)),
     ),
     shape: fletcher.shapes.rect,
     fill: hue.fill,
     stroke: tokens.stroke-default + hue.stroke,
-    inset: tokens.pad-inside-shape,
+    inset: 0pt,
     corner-radius: tokens.radius-shape,
   ),
 )
@@ -188,7 +208,7 @@
   text(size: tokens.size-caption, weight: tokens.weight-bold, fill: palette.ink-muted, upper("corner ribbon")),
   text(size: tokens.size-caption, weight: tokens.weight-bold, fill: palette.ink-muted, upper("icon block")),
 
-  align(center + horizon, header-bar-node(palette.blue,    "users", "service")),
+  align(center + horizon, header-bar-node(palette.blue, "users", "service", "body content")),
   align(center + horizon, ribbon-node(palette.purple, "Request", "structure", palette.red.stroke)),
   align(center + horizon, icon-block-node(palette.orange, "\u{F007}", "client", "human")),
 

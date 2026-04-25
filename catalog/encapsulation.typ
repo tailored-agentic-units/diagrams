@@ -74,10 +74,10 @@
 )
 
 // Inline edge closures — query = solid green, event = dashed yellow.
-// Scoped to this diagram; not lifted into a shared library.
+// Labels render via Fletcher's native label-fill so the background matches
+// the page surface in either theme; no custom box wrapper.
 #let _edge-label(label) = if label != none {
-  box(fill: palette.surface-muted, inset: (x: 4pt, y: 1pt), radius: 3pt,
-    text(size: tokens.label-size, weight: tokens.weight-bold, fill: palette.ink, label))
+  text(size: tokens.label-size, weight: tokens.weight-bold, fill: palette.ink, label)
 } else { none }
 
 // `label-pos` parameter lets each call anchor the label near a specific
@@ -86,11 +86,13 @@
 #let query-edge(from, to, label: none, label-pos: 0.5) = edge(from, to, "->",
   stroke: (paint: palette.green.stroke, thickness: tokens.stroke-default),
   _edge-label(label), label-side: left, label-sep: tokens.label-sep, label-pos: label-pos,
+  label-fill: palette.surface,
 )
 
 #let event-edge(from, to, label: none, label-pos: 0.5) = edge(from, to, "->",
   stroke: (paint: palette.yellow.stroke, thickness: tokens.stroke-default, dash: "dashed"),
   _edge-label(label), label-side: left, label-sep: tokens.label-sep, label-pos: label-pos,
+  label-fill: palette.surface,
 )
 
 // ---- title -----------------------------------------------------------------

@@ -49,7 +49,7 @@
 #grid(
   columns: (auto, auto, 1fr, 2fr),
   column-gutter: tokens.gap-cell,
-  row-gutter: tokens.gap-structured-text * 2,
+  row-gutter: tokens.gap-cell,
   align: (left + horizon, right + horizon, left + horizon, left + horizon),
 
   col-header("token"), col-header("pt"), col-header("sample"), col-header("usage"),

@@ -60,8 +60,10 @@
   // inside function bodies evaluates inconsistently and silently broke cells.
   let base-stroke = if stroke-color == none { hue.stroke } else { stroke-color }
   let base-fill   = if fill-color   == none { hue.fill   } else { fill-color }
-  let s-color = if faded { base-stroke.lighten(60%) } else { base-stroke }
-  let f-color = if faded { base-fill.lighten(50%)   } else { base-fill }
+  // Faded mixes toward the page surface — works in both themes (lightening
+  // a dark-mode fill made it more prominent, the opposite of "faded").
+  let s-color = if faded { color.mix((base-stroke, 40%), (palette.surface, 60%)) } else { base-stroke }
+  let f-color = if faded { color.mix((base-fill,   40%), (palette.surface, 60%)) } else { base-fill }
   let stroke-spec = if stroke-dash != none {
     (paint: s-color, thickness: stroke-thickness, dash: stroke-dash)
   } else {
@@ -106,7 +108,7 @@
 
 #section-title("anchor · one tri-state example")
 #v(tokens.gap-structured-text)
-#note([An illustrative scenario: a service might be #raw("owned") (first-party), #raw("self-hosted") (runs on user infrastructure), or #raw("external") (third-party SaaS). Stroke pattern carries the three-state signal here. Any of the mechanisms catalogued below could replace it if the diagram needs different visual weight.])
+#note([An illustrative scenario: a service might be #raw("owned") (first-party), #raw("self-hosted") (runs on user infrastructure), or #raw("external") (third-party SaaS). Each state combines a geometry mechanism with a corner badge so the difference reads at a glance. Any of the mechanisms catalogued below could replace these if a diagram needs different visual weight.])
 #v(tokens.space-between-shapes)
 
 #grid(
@@ -118,17 +120,17 @@
   variant-cell(
     variant-shape(),
     "owned",
-    [default · solid stroke],
+    [default · baseline shape],
   ),
   variant-cell(
-    variant-shape(stroke-dash: "dashed"),
+    variant-shape(extrude: (0, 3), badge: "\u{F473}"),
     "self-hosted",
-    raw("stroke-dash: \"dashed\""),
+    [extruded · #raw("nf-oct-server") badge],
   ),
   variant-cell(
-    variant-shape(stroke-dash: "dotted"),
+    variant-shape(faded: true, badge: "\u{F0C2}"),
     "external",
-    raw("stroke-dash: \"dotted\""),
+    [faded · #raw("nf-fa-cloud") badge],
   ),
 )
 

@@ -25,11 +25,11 @@
 
   // ---- typography (single family; hierarchy via weight + size) ----
   font:           "CaskaydiaMono NFP",
-  size-label:     8pt,
-  size-caption:   9pt,
-  size-body:      10pt,
-  size-title:     12pt,
-  size-heading:   14pt,
+  size-label:     9pt,
+  size-caption:   10pt,
+  size-body:      11pt,
+  size-title:     13pt,
+  size-heading:   15pt,
   weight-light:   "light",
   weight-body:    "regular",
   weight-bold:    "semibold",
@@ -45,5 +45,5 @@
 
   // ---- edge labels ----
   label-sep:        10pt,     // edge label offset from line (was 6pt — too tight)
-  label-size:       8.5pt,
+  label-size:       9.5pt,
 )

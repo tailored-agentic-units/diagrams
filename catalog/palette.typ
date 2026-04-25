@@ -24,6 +24,9 @@
 #let col-header(s)    = text(size: tokens.size-caption, weight: tokens.weight-bold, fill: palette.ink-muted, upper(s))
 #let note(s)          = text(size: tokens.size-caption, fill: palette.ink-muted, style: "italic", s)
 
+// Universal link styling: blue + underline (matches glyphs.typ convention).
+#show link: it => text(fill: palette.blue.stroke, underline(offset: 1.5pt, it))
+
 // Swatch: a small rect filled with the given colour, hex label underneath.
 #let swatch(c, step) = stack(dir: ttb, spacing: 4pt,
   rect(width: 52pt, height: 28pt, fill: c, stroke: tokens.stroke-thin + palette.border-muted, radius: 3pt),
@@ -49,7 +52,7 @@
 )
 #v(tokens.gap-structured-text)
 #align(center,
-  note([Hex values traced to #raw("primer/primitives") #raw("base.color.<hue>.<step>"). Steps 0-9 run lightest → darkest. Light-theme values shown; dark-theme inverts surface/ink and typically uses steps 3-4 for stroke accents.]))
+  note([Hex values traced to #link("https://primer.style/")[Primer]'s #raw("primer/primitives") #raw("base.color.<hue>.<step>") tokens; the eight-hue selection mirrors the #link("https://brand.github.com/")[GitHub Brand Toolkit] color anchors. Steps 0-9 run lightest → darkest. Light-theme values shown; dark-theme inverts surface/ink and typically uses steps 3-4 for stroke accents.]))
 #v(tokens.space-between-ranks)
 
 // ---- SECTION A — hue ladders -----------------------------------------------

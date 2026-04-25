@@ -30,16 +30,24 @@
 #let col-header(s)    = text(size: tokens.size-caption, weight: tokens.weight-bold, fill: palette.ink-muted, upper(s))
 #let note(s)          = text(size: tokens.size-caption, fill: palette.ink-muted, style: "italic", s)
 
-// Single cell: glyph rendered at 18pt, codepoint underneath, name below.
+// Single cell: glyph rendered inside a neutral rounded rect (so it reads as
+// "icon, considered as visual unit"), with codepoint + name stacked below
+// for breathing room.
 // repr() of `"\u{XXXX}"` returns the 10-char form `"\u{xxxx}"`; the hex digits
 // sit between index 4 (after `"\u{`) and the closing `}"` (last 2 chars).
 #let glyph-cell(codepoint, name) = {
   let r = repr(codepoint)
   let hex = upper(r.slice(4, r.len() - 2))
-  stack(dir: ttb, spacing: 4pt,
-    text(size: 18pt, fill: palette.ink, codepoint),
-    text(size: 7pt, fill: palette.ink-subtle, "U+" + hex),
-    text(size: tokens.size-label, fill: palette.ink-muted, name),
+  stack(dir: ttb, spacing: tokens.gap-cell,
+    box(width: 48pt, height: 40pt, fill: palette.surface-muted,
+        stroke: tokens.stroke-thin + palette.border-muted,
+        radius: tokens.radius-shape, inset: tokens.pad-inside-shape,
+      align(center + horizon,
+        text(size: 18pt, fill: palette.ink, codepoint))),
+    stack(dir: ttb, spacing: tokens.gap-structured-text,
+      text(size: tokens.size-caption, fill: palette.ink-subtle, "U+" + hex),
+      text(size: tokens.size-label, fill: palette.ink-muted, name),
+    ),
   )
 }
 
@@ -291,9 +299,9 @@
   node((1, 0), "auth", shape: fletcher.shapes.rect, fill: palette.blue.fill,    stroke: tokens.stroke-default + palette.blue.stroke,  inset: tokens.pad-inside-shape, corner-radius: tokens.radius-shape),
   edge((0, 0), (1, 0), "->",
     stroke: (paint: palette.green.stroke, thickness: tokens.stroke-default),
-    box(fill: palette.surface-muted, inset: (x: 4pt, y: 1pt), radius: 3pt,
-      text(size: tokens.label-size, weight: tokens.weight-bold, fill: palette.ink, text(fill: palette.green.stroke, "\u{F023} ") + "authorised")),
-    label-side: center, label-sep: 4pt,
+    label-fill: palette.surface, label-side: center, label-sep: 4pt,
+    text(size: tokens.label-size, weight: tokens.weight-bold, fill: palette.ink,
+      text(fill: palette.green.stroke, "\u{F023} ") + "authorised"),
   ),
 )
 
