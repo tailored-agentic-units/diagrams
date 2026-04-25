@@ -1,0 +1,9 @@
+# editor + OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*~
+
+# local mise overrides
+.mise.local.toml

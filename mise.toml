@@ -1,0 +1,36 @@
+[tasks.render]
+description = "Render every standalone .typ diagram to dual-theme SVGs (responsive by default; static if marked)"
+run = '''
+set -e
+# design/tokens.typ and design/theme.typ are imported modules, not diagrams.
+#
+# Per-file render mode is opt-in via a magic comment `// render: static` at the
+# top of the .typ source. When present, the SVG keeps its fixed pt-dimensions
+# (page-style references designed at a meaningful scale). When absent, the
+# SVG's width/height attributes are stripped post-compile, leaving only the
+# viewBox so the SVG scales responsively to its <img width="100%"> container.
+find . -type f -name '*.typ' \
+  -not -name 'tokens.typ' \
+  -not -name 'theme.typ' \
+  -not -path '*/.git/*' \
+  | while read -r f; do
+    base="${f%.typ}"
+    if grep -qE '^//\s*render:\s*static\b' "$f"; then
+      mode=static
+    else
+      mode=responsive
+    fi
+    for theme in light dark; do
+      out="${base}-${theme}.svg"
+      typst compile --root . --input theme=${theme} "$f" "$out"
+      if [ "$mode" = "responsive" ]; then
+        sed -i -E 's/ width="[0-9.]+pt"//; s/ height="[0-9.]+pt"//' "$out"
+      fi
+    done
+    printf "  rendered  %-40s [%s]\n" "${base#./}-{light,dark}.svg" "$mode"
+  done
+'''
+
+[tasks.clean]
+description = "Remove all rendered SVGs"
+run = "find . -type f -name '*.svg' -delete && echo 'cleaned'"
