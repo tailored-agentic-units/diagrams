@@ -4,12 +4,12 @@ Multi-phase work on the TAU diagramming infrastructure. Each phase is its own Cl
 
 ## Phases
 
-| # | File | Goal |
-|---|---|---|
-| 01 | [`01-catalog-infrastructure.md`](./01-catalog-infrastructure.md) | Lock down `catalog/*` and `design/*` as the foundational ingredient reference. Audit catalog files for design-system violations. |
-| 02 | [`02-skill-development.md`](./02-skill-development.md) | Author the `typst-diagrams` skill at `~/tau/diagrams/.claude/skills/typst-diagrams/` using the `skill-creator` skill for layout. |
-| 03 | [`03-core-tau-diagrams.md`](./03-core-tau-diagrams.md) | Design the diagram generation process (planning → generation → validation), then build core TAU library + signal flow diagrams (protocol/, format/, provider/, agent/, tau/). Seed the blueprints concept. |
-| 04 | [`04-advanced-tau-diagrams.md`](./04-advanced-tau-diagrams.md) | Apply skill + blueprints to `~/tau/orchestrate` and `~/code/herald`. |
+| # | File | Status | Goal |
+|---|---|---|---|
+| 01 | [`01-catalog-infrastructure.md`](./01-catalog-infrastructure.md) | **complete** | Lock down `catalog/*` and `design/*` as the foundational ingredient reference. Audit catalog files for design-system violations. |
+| 02 | [`02-skill-development.md`](./02-skill-development.md) | pending | Author the `typst-diagrams` skill at `~/tau/diagrams/.claude/skills/typst-diagrams/` using the `skill-creator` skill for layout. |
+| 03 | [`03-core-tau-diagrams.md`](./03-core-tau-diagrams.md) | pending | Design the diagram generation process (planning → generation → validation), then build core TAU library + signal flow diagrams (protocol/, format/, provider/, agent/, tau/). Seed the blueprints concept. |
+| 04 | [`04-advanced-tau-diagrams.md`](./04-advanced-tau-diagrams.md) | pending | Apply skill + blueprints to `~/tau/orchestrate` and `~/code/herald`. |
 
 Phases run in sequence — phase N depends on phase N-1 being substantively done.
 

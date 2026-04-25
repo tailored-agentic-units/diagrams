@@ -1,5 +1,5 @@
 // ==============================================================
-// TAU theme — colour palette traced to GitHub Primer primitives.
+// Theme — colour palette traced to GitHub Primer primitives.
 //
 // Structure: surfaces + ink + borders use neutral steps. Each
 // chromatic hue exposes a `(stroke, fill, ink, divider)` quad
@@ -24,6 +24,8 @@
 //
 // Swap via `--input theme=light|dark` at compile time.
 // ==============================================================
+
+#import "tokens.typ": tokens
 
 #let theme-name = sys.inputs.at("theme", default: "light")
 
@@ -90,3 +92,8 @@
   pink:    _hue(stroke: rgb("#BF3989"), fill: rgb("#FFEFF7"), ink: rgb("#772057")),
   coral:   _hue(stroke: rgb("#C4432B"), fill: rgb("#FFF0EB"), ink: rgb("#801F0F")),
 )}
+
+// Hue-aware horizontal rule. Use for structural geometry inside a hue-filled
+// shape so the divider stays in the same colour family as the host instead
+// of clashing with neutral grey. Default purple matches the catalog default.
+#let divider(hue: palette.purple) = line(length: 100%, stroke: tokens.stroke-thin + hue.divider)

@@ -1,5 +1,5 @@
 // ==============================================================
-// TAU design tokens — pure values, no colour.
+// Design tokens — pure values, no colour.
 //
 // Palette lives in theme.typ for dual-theme swap. Tokens here are
 // values diagrams reference for typography, whitespace, stroke

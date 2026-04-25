@@ -9,7 +9,7 @@
 
 #import "@preview/fletcher:0.5.8" as fletcher: diagram, node, edge
 #import "../design/tokens.typ": tokens
-#import "../design/theme.typ": palette
+#import "../design/theme.typ": palette, divider
 
 #set page(
   width:  900pt,
@@ -34,10 +34,6 @@
 // Body-content helpers used across sections.
 #let _title(s) = text(size: tokens.size-body, weight: tokens.weight-bold, fill: palette.ink, s)
 #let _kind(s, on-hue: palette.purple.ink) = text(size: tokens.size-label, weight: tokens.weight-light, fill: on-hue, style: "italic", "(" + s + ")")
-// Hue-aware divider — uses palette.<hue>.divider so the rule reads as part of
-// the same colour family as the host shape instead of fighting the fill with
-// a neutral grey. Default is purple to match node-demo's default hue.
-#let _divider(hue: palette.purple) = line(length: 100%, stroke: tokens.stroke-thin + hue.divider)
 
 // Default demo node — purple unless overridden via stroke-color/fill-color.
 #let node-demo(body, stroke-color: palette.purple.stroke, fill-color: palette.purple.fill) = diagram(
@@ -119,7 +115,7 @@
   node-demo(stack(dir: ttb, spacing: tokens.gap-structured-text,
     _title("Request"),
     _kind("structure", on-hue: palette.purple.ink),
-    _divider(),
+    divider(),
     grid(columns: 2, column-gutter: tokens.gap-cell, row-gutter: tokens.gap-structured-text * 2,
       raw("id"),       raw("UUID"),
       raw("messages"), raw("[]Message"),
@@ -147,7 +143,7 @@
   align(center + horizon, node-demo(stack(dir: ttb, spacing: tokens.gap-structured-text,
     _title("Client"),
     _kind("interface", on-hue: palette.purple.ink),
-    _divider(),
+    divider(),
     raw("Chat(ctx, req)"),
     raw("Vision(ctx, req)"),
     raw("Tools(ctx, req)"),
@@ -157,7 +153,7 @@
   align(center + horizon, node-demo(stack(dir: ttb, spacing: tokens.gap-structured-text,
     _title("Role"),
     _kind("enum", on-hue: palette.purple.ink),
-    _divider(),
+    divider(),
     text("SYSTEM"),
     text("USER"),
     text("ASSISTANT"),
@@ -277,7 +273,7 @@
     stack(dir: ttb, spacing: tokens.gap-structured-text,
       _title("planner"),
       _kind("agent", on-hue: palette.orange.ink),
-      _divider(hue: palette.orange),
+      divider(hue: palette.orange),
       grid(columns: 2, column-gutter: tokens.gap-cell, row-gutter: tokens.gap-structured-text * 2,
         text(fill: palette.ink-muted, "model:"),  raw("claude-sonnet-4.6"),
         text(fill: palette.ink-muted, "tools:"),  raw("web_search, execute_code"),

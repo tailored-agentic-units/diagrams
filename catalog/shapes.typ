@@ -10,7 +10,7 @@
 #import "@preview/fletcher:0.5.8" as fletcher: diagram, node, edge
 #import "@preview/cetz:0.3.4": draw
 #import "../design/tokens.typ": tokens
-#import "../design/theme.typ": palette
+#import "../design/theme.typ": palette, divider
 
 #set page(
   width:  900pt,
@@ -104,9 +104,8 @@
 #v(tokens.space-between-shapes)
 
 // Composite 1 — title block on top, separator rule, body content below.
-// Mirrors UML class notation: identity above, payload below. The line is
-// a `tokens.stroke-thin` divider in the host hue so it reads as a structural
-// boundary, not just decoration.
+// Mirrors UML class notation: identity above, payload below. The hue-aware
+// `divider()` helper keeps the rule in the same colour family as the host.
 #let header-bar-node(hue, title, kind, body) = diagram(
   spacing: (0pt, 0pt),
   node((0, 0),
@@ -118,7 +117,7 @@
             text(size: tokens.size-label, weight: tokens.weight-light, fill: hue.ink, style: "italic", "(" + kind + ")"),
           ),
         ),
-        line(length: 100%, stroke: tokens.stroke-thin + hue.divider),
+        divider(hue: hue),
         block(width: 100%, inset: tokens.pad-inside-shape,
           text(size: tokens.size-label, fill: palette.ink-muted, body),
         ),

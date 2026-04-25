@@ -20,9 +20,9 @@ Read in this order before doing anything:
    - `~/tau/diagrams/mise.toml` — render pipeline
 4. **`~/tau/typst-responsive-svgs.md`** — context for the static/responsive marker mechanism.
 
-## Current state (end of session 2026-04-25)
+## Status: COMPLETE
 
-Three rounds of user critique have run. Each round's fixes have been applied and re-rendered. Round 4 critique is pending — start there.
+Six rounds of user critique applied. Catalog locked. Design-layer audit run; all findings actioned or deliberately deferred. Ready for phase 02.
 
 ### Catalog inventory
 
@@ -46,47 +46,21 @@ Three rounds of user critique have run. Each round's fixes have been applied and
 - **Round 1** — initial catalog scaffolding. Established 10 files. Ran into the auto-page-height ↔ self-loop circular extent bug (edges.typ rendered as ~10¹⁷pt-tall blank SVG); fixed by wrapping self-loops in a fixed-size box.
 - **Round 2** — major architectural pivot per user direction: removed `entities.typ` (prescribed shape→concept vocabulary), renamed `schema/` → `design/`, refactored `theme.typ` to color-anchored tokens (`palette.{hue}.{stroke,fill,ink}`), added per-hue `ink` for chromatic contrast on tinted fills, added `// render: static` magic comment + mise pipeline support, expanded catalog (typography, spacing, palette, glyphs, edges, labels, composite shapes, custom shapes via CeTZ), reframed marks/variants/shapes captions to stance-neutral.
 - **Round 3** — bug fixes + targeted refinements: variants.typ render bug (let-rebind inside if-block didn't propagate), glyph codepoint truncation (`repr().slice(3,7)` → `slice(4, len-2)`), edges.typ 180° self-loop missing (clip + sized box), encapsulation edge label position (parameterised `label-pos`), labels.typ row-gutter bumps + ICON-LEFT sizing, glyphs link styling rule, marks Section C reframed as illustrative, palette page width reduced + Section B retitled "semantic color groups" + Section C reframed to "example assignments", shapes main grid restructured to single-hue + namespace caption, composite shapes fixed (header bar horizontal, corner ribbon point at top-right, icon block padding + radius), custom shapes contiguous tabbed-rect + quatrefoil from SVG path.
+- **Round 4** — `variants.typ` extrude default `()` → `(0,)` (Fletcher's own default; empty tuple suppressed all strokes); `edges.typ` Section C self-loop range pinned to `(115°, 160°)` after discovering 180° is a Fletcher degeneracy (loop diameter → ∞); `encapsulation.typ` `persist` label re-centred at 0.5 and `lookup` semantically + visually moved to `worker → cache`; `labels.typ` reconstructed after a sed mishap nuked the file and `row-gutter` switched to `gap-cell` (was `space-between-ranks * 1.5` = 54pt); `palette.typ` description gained Primer + GitHub Brand Toolkit links; `shapes.typ` HEADER BAR restructured to title → divider → body block (UML separator pattern), CORNER RIBBON rewritten as `curve()` with bezier-rounded apex.
+- **Round 5** — universal: typography scale +1pt across every size token; per-hue `divider` colour added via `_hue()` helper in `theme.typ` (50/50 mix of fill and stroke); blue + underline `#show link` rule added to `palette.typ`; `glyphs.typ` Sections A–H glyphs wrapped in neutral rounded rects with breathing room for codepoint + name; `shapes.typ` CORNER RIBBON fixed flush via `inset: 0pt` on the host node + inner block carrying its own padding (matched ICON BLOCK pattern); `variants.typ` `faded` rewritten as `color.mix(... → palette.surface)` so dark-mode fills don't lighten themselves into prominence; `variants.typ` anchor section now demonstrates extruded + `nf-oct-server` badge for self-hosted, faded + `nf-fa-cloud` for external.
+- **Round 6** — universal: all edge labels switched from custom `box(fill: surface, ...)` wrappers to Fletcher's native `label-fill: palette.surface` (the white border in dark mode came from Fletcher's auto-wrap rendering at hardcoded white *outside* the custom box; the native param eliminates the double-layer); `spacing.typ` Section E edges given explicit theme-aware `palette.ink` stroke; `typography.typ` Section A `row-gutter` bumped to `gap-cell`.
+- **Audit** — design-layer idiomatic audit run via Explore subagent. Twelve checklist items evaluated against Typst + Fletcher + CeTZ conventions and the catalog patterns. Approved actions: lifted `_divider(hue:)` from `labels.typ` to `design/theme.typ` as `divider(hue:)` (Item 4); also pulled into `shapes.typ` HEADER BAR for consistency. Show-rule lift (Item 11) declined — Typst show rules are document-scoped and don't survive a function wrapper, so per-file 1-liner repetition remains the idiomatic pattern. Diagram-default helper (Item 5) deferred to phase 02 (skill-layer concern). All other items kept as-is with rationale documented.
 
-### Outstanding work
+### Done
 
-**Round 4 critique pending.** Re-render all 10 SVGs (`mise run clean && mise run render`) and present them for the user's next critique pass. Iterate.
+All criteria met:
 
-**Required gate before phase 02 — design-system audit pass.** Per user direction: "all of the catalog .typ files should be using the design infrastructure natively and not hacking together single-use fixes to appease the issues that I callout." Audit each `catalog/*.typ` file for violations of the design system:
-
-- Inline `pt` literals (e.g., `inset: 6pt`) that should be tokens
-- Inline hex (`rgb("#…")`) outside `design/theme.typ`
-- Ad-hoc gutter / inset values that don't pull from `tokens.*`
-- Repeated row-gutter / column-gutter overrides that suggest a missing token
-- Hard-coded font weights or sizes that should reference tokens
-- Fixed-size boxes used as workarounds — document or justify
-- Show rules / helpers re-defined per file that should be lifted into a shared convention
-
-For each violation: (a) propose a new token in `design/tokens.typ` or `design/theme.typ`, (b) replace with an existing token, or (c) justify as a documented exception (the self-loop fixed-size box is a known exception — see `reference_typst_fletcher_pitfalls.md`). Update the catalog file to use the token.
-
-This audit is the gate. Phase 02 cannot start until the audit is complete and `design/` cleanly accommodates every catalog scenario.
-
-## Approach
-
-1. Re-render the catalog cleanly (`mise run clean && mise run render`) and present output to the user for round 4 critique.
-2. Apply each critique item the user calls out. **Do not hack single-use fixes** — diagnose the root cause; if multiple files would benefit, lift the fix into `design/`.
-3. After the user is satisfied with visual output across all 10 files, run the design-system audit pass as a separate explicit step. Report findings, propose `design/` additions, apply them, and re-verify catalog files use the new tokens.
-4. Hand off to phase 02 only when the audit is clean and the user signs off.
-
-### Working pattern per round
-
-- Read user critique image-by-image; map each issue to the responsible catalog file.
-- Use TaskCreate to track each fix; mark in_progress / completed as you go.
-- Render after each file's fixes (`typst compile --root . --input theme=light catalog/<file>.typ catalog/<file>-light.svg`) to catch errors early.
-- Final pass: `mise run clean && mise run render` and present.
-
-## Done criteria
-
-- [ ] Round 4+ critique cycles complete; user signs off on every catalog SVG.
-- [ ] Design-system audit complete; no inline `pt` / hex outside `design/`; every recurring pattern is tokenised or has a documented exception.
-- [ ] `design/tokens.typ` + `design/theme.typ` cleanly accommodate every catalog scenario.
-- [ ] `mise run clean && mise run render` produces all 20 SVGs (10 files × 2 themes) without errors.
-- [ ] No prescribed vocabulary lock-ins remain (no domain-anchored tokens, no shape→concept fixed mappings).
-- [ ] Round 3 changes that haven't been visually verified yet are confirmed.
+- [x] Round 4–6 critique cycles complete; user signed off on every catalog SVG.
+- [x] Design-layer audit complete; conclusions actioned or documented as deferred.
+- [x] `design/tokens.typ` + `design/theme.typ` cleanly accommodate every catalog scenario; `theme.typ` now exports `palette` + `divider` + `_hue` helper.
+- [x] `mise run clean && mise run render` produces all 20 SVGs (10 files × 2 themes) without errors.
+- [x] No prescribed vocabulary lock-ins; palette is colour-anchored, no domain tokens.
+- [x] Self-loop fixed-box, render-mode magic comment, and `label-fill: palette.surface` documented as catalog conventions.
 
 ## Hand-off to phase 02
 
