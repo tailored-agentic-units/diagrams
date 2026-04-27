@@ -9,11 +9,11 @@ Content patterns inside nodes (the label) and the container pattern that lets ex
 
 ## Labels
 
-A node body in Fletcher is content — anything that evaluates to content can be the body. Seven patterns cover most use cases, ordered foundational → composed.
+A node body in Fletcher is content — anything that evaluates to content can be the body.
 
 ### Single-line
 
-The minimum. A plain string or a single `text(...)` call. Reads as the bare identity of the node — when the label needs more than a name, the next pattern (stacked) carries it.
+The minimum. A plain string or a single `text(...)` call. Reads as the bare identity of the node.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./single-line-dark.svg">
@@ -40,7 +40,6 @@ A grid of `name : type` rows. Useful for record-like entities, schemas, enums. `
   <img src="./field-list-light.svg" alt="field list — Request structure with id, messages, model, stream fields" width="100%">
 </picture>
 
-A field list past roughly six rows starts competing with the diagram's other content. Decompose into multiple nodes or move details into surrounding prose.
 
 ### Divider
 

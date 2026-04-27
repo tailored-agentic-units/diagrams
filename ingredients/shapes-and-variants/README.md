@@ -59,7 +59,7 @@ An illustrative scenario: a service might be **owned** (first-party), **self-hos
 
 ### Variant mechanisms catalog
 
-Same baseline shape, one parameter changed per cell. Hue stays constant so visual differences read as variant-mechanism only. Variants compose: two signals reinforce each other or split the differentiation; three or more usually mean the diagram should decompose rather than escalate.
+Same baseline shape, one parameter changed per cell. Hue stays constant so visual differences read as variant-mechanism only. Variants compose: two signals reinforce each other or split the differentiation.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./variant-mechanisms-dark.svg">

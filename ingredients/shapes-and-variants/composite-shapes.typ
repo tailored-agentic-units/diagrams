@@ -50,24 +50,31 @@
   )
 }
 
-#let ribbon-node(hue, title, kind, ribbon-color) = diagram(
-  spacing: (0pt, 0pt),
-  node((0, 0),
-    box(
-      block(inset: tokens.pad-inside-shape,
-        stack(dir: ttb, spacing: tokens.gap-structured-text,
-          text(size: tokens.size-body, weight: tokens.weight-bold, fill: palette.ink, title),
-          text(size: tokens.size-label, weight: tokens.weight-light, fill: hue.ink, style: "italic", "(" + kind + ")"),
+#let ribbon-node(hue, title, kind, ribbon-color) = {
+  let stroke-half = tokens.stroke-default / 2
+  diagram(
+    spacing: (0pt, 0pt),
+    node((0, 0),
+      box(
+        block(inset: tokens.pad-inside-shape,
+          stack(dir: ttb, spacing: tokens.gap-structured-text,
+            text(size: tokens.size-body, weight: tokens.weight-bold, fill: palette.ink, title),
+            text(size: tokens.size-label, weight: tokens.weight-light, fill: hue.ink, style: "italic", "(" + kind + ")"),
+          ),
+        ) + place(top + right,
+          dx: stroke-half,
+          dy: -stroke-half,
+          corner-ribbon(14pt, tokens.radius-shape + stroke-half, ribbon-color),
         ),
-      ) + place(top + right, corner-ribbon(14pt, tokens.radius-shape, ribbon-color)),
+      ),
+      shape: fletcher.shapes.rect,
+      fill: hue.fill,
+      stroke: tokens.stroke-default + hue.stroke,
+      inset: 0pt,
+      corner-radius: tokens.radius-shape,
     ),
-    shape: fletcher.shapes.rect,
-    fill: hue.fill,
-    stroke: tokens.stroke-default + hue.stroke,
-    inset: 0pt,
-    corner-radius: tokens.radius-shape,
-  ),
-)
+  )
+}
 
 // Composite 3 — leading icon block.
 #let icon-block-node(hue, glyph, title, kind) = diagram(

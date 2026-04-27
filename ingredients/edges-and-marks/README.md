@@ -2,10 +2,10 @@
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./readme-dark.svg">
-  <img src="./readme-light.svg" alt="edges and marks — three nodes connected by query (solid green), write (double red), and event (dashed yellow) edges" width="100%">
+  <img src="./readme-light.svg" alt="edges and marks — client commands a service, service writes to store, service emits an event to a bus" width="100%">
 </picture>
 
-Edges connect nodes; marks are the head/tail glyphs on edges. Together they carry the relationships in a diagram. Mark vocabulary differentiates kinds (read vs write vs event); routing primitives (bend, waypoints, self-loops) determine how the line gets drawn between endpoints.
+Edges connect nodes; marks are the head/tail glyphs on edges. Together they carry the relationships in a diagram. Mark vocabulary differentiates kinds; routing primitives (bend, waypoints, self-loops) determine how the line gets drawn between endpoints.
 
 ## Marks and stroke styles
 
@@ -13,7 +13,7 @@ The visual library of head/tail glyphs and body styles. Mark + body compose free
 
 ### Head and tail primitives
 
-Fletcher's full mark inventory. A typical diagram uses 1-3 mark types — many distinct marks fragment the visual vocabulary, so additional marks justify themselves only when each carries a distinct kind.
+Fletcher's full mark inventory.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./head-tail-primitives-dark.svg">

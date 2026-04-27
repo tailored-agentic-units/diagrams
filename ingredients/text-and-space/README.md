@@ -5,11 +5,11 @@
   <img src="./readme-light.svg" alt="text and space — labeled cards demonstrating typography hierarchy and whitespace tokens" width="100%">
 </picture>
 
-Two ingredient categories that work in tandem: typography (size, weight, style, decoration, tracking, color) shapes the text inside a label; whitespace primitives (insets, gutters, gaps) shape the space around it. Hierarchy is expressed through weight + size, never through font family — every diagram uses the same single font (CaskaydiaMono NFP).
+Two ingredient categories that work in tandem: typography (size, weight, style, decoration, tracking, color) shapes the text inside a label; whitespace primitives (insets, gutters, gaps) shape the space around it. Hierarchy is expressed through weight + size, never through font family.
 
 ## Typography
 
-The five-axis substrate: any label composes from size × weight × style × decoration × color. They overlay orthogonally — each diagram picks what its labels need.
+Any label composes from size × weight × style × decoration × color. They overlay orthogonally; each diagram picks what its labels need.
 
 ### Size scale
 
@@ -22,7 +22,7 @@ Five token slots cover the typical diagram. The scale is multiplicative (~1.1–
 
 ### Weight
 
-Three cuts: light for de-emphasized annotations, body for default, bold for titles and emphasis. Weight changes prominence within a size without shifting vertical metrics.
+Weight changes prominence within a size without shifting vertical metrics. Use `weight-light` for de-emphasized annotations, `weight-body` as default, and `weight-bold` for titles and emphasis.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./weight-dark.svg">
@@ -31,7 +31,7 @@ Three cuts: light for de-emphasized annotations, body for default, bold for titl
 
 ### Style and decoration
 
-Italic is a style; underline / overline / strike / highlight are decorations. They overlay on any size + weight combination. Use sparingly — decoration competes with stroke colors for attention.
+Italic is a style; underline / overline / strike / highlight are decorations. They overlay on any size + weight combination.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./style-decoration-dark.svg">
@@ -76,11 +76,11 @@ Inline composition switches style mid-content. A single inline emphasis fits as 
 
 ## Whitespace and geometry
 
-Whitespace tokens are named by the relationship they govern, not by where they appear. Geometry tokens (corner radius) sit alongside because both control how a shape feels.
+Whitespace tokens are named by the relationship they govern, not by where they appear.
 
 ### Whitespace tokens
 
-Seven named slots cover every relationship a diagram needs. Adding ad-hoc `pt` values defeats the design system — every diagram value flows through these tokens.
+Seven named slots cover the working relationships a diagram needs. Every diagram value flows through these tokens.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./token-inventory-dark.svg">

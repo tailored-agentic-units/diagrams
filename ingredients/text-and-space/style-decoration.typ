@@ -12,9 +12,9 @@
   ("italic",      text(style: "italic", [The quick brown fox])),
   ("bold",        text(weight: "semibold", [The quick brown fox])),
   ("bold italic", text(weight: "semibold", style: "italic", [The quick brown fox])),
-  ("underline",   underline([The quick brown fox])),
   ("overline",    overline([The quick brown fox])),
   ("strike",      strike([The quick brown fox])),
+  ("underline",   underline([The quick brown fox])),
   ("highlight",   highlight(fill: palette.blue.fill, [The quick brown fox])),
   ("colored",     text(fill: palette.red.stroke, [The quick brown fox])),
 )

@@ -6,15 +6,15 @@
 #show raw: r => text(fill: palette.purple.stroke, r)
 
 #let source-tile(glyph, name, range, best-for) = box(
-  width: 200pt,
+  width: 220pt,
   fill: palette.surface-muted,
   stroke: tokens.stroke-thin + palette.border-muted,
   radius: tokens.radius-shape,
-  inset: tokens.pad-inside-shape,
-  stack(dir: ttb, spacing: tokens.gap-structured-text,
-    grid(columns: (auto, 1fr), column-gutter: tokens.gap-cell, align: (left + horizon, left + horizon),
-      text(size: 24pt, fill: palette.blue.stroke, glyph),
-      stack(dir: ttb, spacing: 2pt,
+  inset: tokens.pad-inside-container,
+  stack(dir: ttb, spacing: tokens.gap-cell,
+    grid(columns: (auto, 1fr), column-gutter: tokens.pad-inside-container, align: (left + horizon, left + horizon),
+      text(size: 26pt, fill: palette.blue.stroke, glyph),
+      stack(dir: ttb, spacing: tokens.gap-structured-text * 1.4,
         text(size: tokens.size-body, weight: tokens.weight-bold, fill: palette.ink, name),
         text(size: tokens.size-label, fill: palette.ink-subtle, range),
       ),

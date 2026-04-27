@@ -5,7 +5,7 @@
   <img src="./readme-light.svg" alt="color and glyphs — four hue-tinted cards each carrying a different glyph + label" width="100%">
 </picture>
 
-Two ingredient categories that work closely together: chromatic hues (and their four-attribute quad) and Nerd Font glyphs (and the four ways to compose them into a diagram). A diagram chooses a hue for what its content needs to differentiate, then glyphs add semantic identity inside the chromatic frame.
+Two ingredient categories that work closely together: chromatic hues (and their four-attribute quad) and Nerd Font glyphs. A diagram chooses a hue for what its content needs to differentiate, then glyphs add semantic identity inside the chromatic frame.
 
 ## Color
 
@@ -13,7 +13,7 @@ The palette is **color-anchored**: hues are named (`blue`, `green`, `orange`, �
 
 ### Hue ladders
 
-The Primer 10-step ladder is the source data behind the four-attribute quad each hue exposes (`stroke`, `fill`, `ink`, `divider`). Steps 0-1 supply subtle fills; step 5 supplies the canonical stroke; step 7 supplies the deep ink for chromatic text on tinted fills.
+The [Primer](https://primer.style/) 10-step ladder is the source data behind the four-attribute quad each hue exposes (`stroke`, `fill`, `ink`, `divider`). Steps 0-1 supply subtle fills; step 5 supplies the canonical stroke; step 7 supplies the deep ink for chromatic text on tinted fills.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./hue-ladders-dark.svg">
@@ -40,7 +40,7 @@ Group → hue and edge-kind → hue mappings. These are reference points, not ru
 
 ## Glyphs
 
-A Nerd Font is a **patched** font: original Latin/code glyphs at standard codepoints, plus icon glyphs from 13 source fonts overlaid into the Unicode Private Use Area. CaskaydiaMono NFP carries all 13 patched ranges. Glyphs are ordinary text — they size, color, and compose like any other text.
+A [Nerd Font](https://www.nerdfonts.com/#home) is a **patched** font: original Latin/code glyphs at standard codepoints, plus [icon glyphs](https://www.nerdfonts.com/cheat-sheet) from 13 source fonts overlaid into the Unicode Private Use Area. Glyphs are ordinary text — they size, color, and compose like any other text.
 
 ### Glyph sources
 
@@ -53,7 +53,7 @@ The 13 source families a Nerd Font patches in. Knowing which source a glyph come
 
 ### Composition patterns
 
-Four placement patterns for a glyph entering a diagram. The glyph is ordinary text under the hood — these patterns are layout choices, not separate types.
+The following demonstrate example patterns for incorporating glyphs into diagrams. The glyph is ordinary text under the hood and can be composed in many different ways.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./composition-patterns-dark.svg">
