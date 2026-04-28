@@ -35,7 +35,7 @@ The pre-loaded skills (`tau-diagrams`, `diagram-authoring`, `diagram-ingredients
 
 Diagrams are organized into tier sub-directories under the subject's library/sub-module directory:
 
-- **`core/`** — level 1. Stakeholder essence in 3-tier subjects; combined non-developer overview in 2-tier subjects.
+- **`core/`** — level 1. Stakeholder overview in 3-tier subjects; combined non-developer overview in 2-tier subjects.
 - **`operational/`** — level 2. IT/DevOps view. Omitted entirely in 2-tier subjects.
 - **`specification/`** — level 3. Developer view.
 
@@ -82,7 +82,7 @@ concerns of operator interest.>
 ### `core/` — level 1
 **Audience:** stakeholders / leadership (or combined non-dev for 2-tier)
 **Diagrams:**
-- **`readme.typ`** (essence)
+- **`readme.typ`** (overview)
   - **Concept:** <what relationships/entities to surface; what story the diagram tells>
   - **Suggested ingredients:** <shapes, edges, labels from the loaded ingredient catalog>
   - **Prose draft:** <1–3 sentences in stakeholder voice — accessible, no jargon>
@@ -92,7 +92,7 @@ concerns of operator interest.>
 ### `operational/` — level 2
 **Audience:** IT / DevOps / systems engineers
 **Diagrams:**
-- **`readme.typ`** (tier essence)
+- **`readme.typ`** (tier overview)
   - **Concept:** <operational relationships — interfaces, deployment surface,
     configuration, observability>
   - **Suggested ingredients:** <…>
@@ -106,7 +106,7 @@ concerns of operator interest.>
 ### `specification/` — level 3
 **Audience:** developers
 **Diagrams:**
-- **`readme.typ`** (tier essence)
+- **`readme.typ`** (tier overview)
   - **Concept:** <types, methods, composition, registry shape, sub-component wiring>
   - **Suggested ingredients:** <…>
   - **Prose draft:** <1–3 sentences in developer voice — specific type names,

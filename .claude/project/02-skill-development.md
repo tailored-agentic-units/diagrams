@@ -182,7 +182,7 @@ Each `SKILL.md` includes a "Sanity checks" section:
 2. **`diagram-design-system`** + **`diagram-ingredients`** in parallel — independent peers above the foundation. Ingredients is meatier (5 ref files distilling the catalog). Design-system is thinner (3 ref files of pattern, including the Nerd Font note).
 3. **`diagram-authoring`** — depends on both peers. The non-blueprint authoring path is the main flow; minimal blueprint spec is the secondary artifact.
 4. **`tau-diagrams`** — pure aggregation + opinionated decisions. Cannot start until 1–3 validate against synthetic non-TAU prompts.
-5. **Catalog → ingredients refactor** — first real authoring exercise against the skills. Builds `~/tau/diagrams/ingredients/` alongside the existing `catalog/`, decomposes page-style files into single-concept diagrams, authors per-axis README narratives, and adds an indexed top-level README with essence diagrams. Closes phase 02 and surfaces any final skill updates. Bootstrap a fresh session against [`catalog-to-ingredients.md`](./catalog-to-ingredients.md).
+5. **Catalog → ingredients refactor** — first real authoring exercise against the skills. Builds `~/tau/diagrams/ingredients/` alongside the existing `catalog/`, decomposes page-style files into single-concept diagrams, authors per-axis README narratives, and adds an indexed top-level README with overview diagrams. Closes phase 02 and surfaces any final skill updates. Bootstrap a fresh session against [`catalog-to-ingredients.md`](./catalog-to-ingredients.md).
 
 ## Done criteria
 

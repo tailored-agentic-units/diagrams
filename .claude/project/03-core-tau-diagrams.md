@@ -11,7 +11,7 @@ This phase is also the validation pass for the design / ingredient / skill / sub
    - `feedback_diagram_toolkit_not_ruleset.md` — non-negotiable framing
    - `feedback_one_diagram_one_concept.md` — each `.typ` source = one output artifact
    - `feedback_shape_vs_text.md` — shape kind is identity; metadata is structured text
-   - `feedback_essence_diagram_naming.md` — `readme.typ` for the leading essence diagram
+   - `feedback_overview_diagram_naming.md` — `readme.typ` for the leading overview diagram
    - `feedback_general_purpose_skills.md`, `feedback_diagram_toolkit_not_ruleset.md`
    - `project_typst_design_system.md`, `project_typst_workspace.md`, `reference_typst_fletcher_pitfalls.md`
    - `reference_github_picture_dual_theme.md` — embed pattern
@@ -31,7 +31,7 @@ For each library, the authoring loop is:
 
 1. **Invoke `technical-writer`** subagent against the target library. Receive structured findings: purpose statement, recommended audience tier count (2 or 3), per-tier diagram concept proposals, audience-voiced prose drafts, sub-component inventory, open questions.
 2. **Review findings with the user**, resolve open questions, confirm tier count.
-3. **Author `readme.typ`** (essence diagram) using `tau-diagrams` skill conventions. Render dual-theme. Write the leading description prose underneath in stakeholder voice.
+3. **Author `readme.typ`** (overview diagram) using `tau-diagrams` skill conventions. Render dual-theme. Write the leading description prose underneath in stakeholder voice.
 4. **Author each remaining tier** in order. Per-section pattern: header → `.typ` source → render → prose. Diagram first; prose expands on it.
 5. **Verify renders** in GitHub Markdown preview (light + dark theme switching).
 6. **Capture toolkit friction** as notes only — do not edit toolkit mid-library. Refine diagrams + README prose freely.
@@ -47,16 +47,16 @@ Tiers are sub-directories, not files. Each tier may contain a single diagram or 
 diagrams/<library>/
 ├── README.md
 ├── core/                       # level-1 (stakeholder, or non-dev overview when 2-tier)
-│   └── readme.typ              # tier essence — always present
+│   └── readme.typ              # tier overview — always present
 ├── operational/                # level-2 (omit entirely when 2-tier)
-│   ├── readme.typ              # tier essence
+│   ├── readme.typ              # tier overview
 │   └── <name>.typ              # additional diagrams as the subject warrants
 └── specification/              # level-3 / technical
-    ├── readme.typ              # tier essence
+    ├── readme.typ              # tier overview
     └── <name>.typ              # additional diagrams
 ```
 
-Each tier directory's `readme.typ` is its essence (consistent with `feedback_essence_diagram_naming.md`). Additional diagrams within a tier are content-named (`wire-flow.typ`, `registry.typ`, etc.). Whether a tier has one diagram or many is decided per library based on subject complexity.
+Each tier directory's `readme.typ` is its overview (consistent with `feedback_overview_diagram_naming.md`). Additional diagrams within a tier are content-named (`wire-flow.typ`, `registry.typ`, etc.). Whether a tier has one diagram or many is decided per library based on subject complexity.
 
 Sub-modules nest with the same pattern recursively:
 
@@ -86,7 +86,7 @@ Renders produce dual-theme pairs (`<tier>/readme-{light,dark}.svg`, `<tier>/<nam
 
 Default: three tier directories.
 
-- **`core/`** — stakeholder essence. What this is and why it exists in TAU. Stakeholder voice.
+- **`core/`** — stakeholder overview. What this is and why it exists in TAU. Stakeholder voice.
 - **`operational/`** — IT/DevOps view. What it interfaces with, where it runs, what an operator needs to know. Operator voice.
 - **`specification/`** — developer specification. Types, methods, composition, registry shape. Developer voice.
 
@@ -101,14 +101,17 @@ Sub-modules are first-class peers: they express platform flexibility/extensibili
 
 ## README pattern
 
-Universal section structure: **header → diagram → prose**. Applied uniformly at H1 (with the level-1 essence from `core/readme.typ`), H2 per tier (with that tier's `readme.typ`), and H3 per additional diagram in a multi-diagram tier. The diagram orients the reader; the prose expands.
+Universal section structure: **header → diagram → prose**. Applied uniformly at H1 (with the level-1 overview from `core/readme.typ`), H2 per tier (with that tier's `readme.typ`), and H3 per additional diagram in a multi-diagram tier. The diagram orients the reader; the prose expands.
 
 ```md
-# [Library]
+# [<subject>](<repository-url>)
+
+<Type>: <github-url-without-https>
+Language: <language>
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./core/readme-dark.svg">
-  <img src="./core/readme-light.svg" alt="[library] — essence" width="100%">
+  <img src="./core/readme-light.svg" alt="[subject] — overview" width="100%">
 </picture>
 
 [1–2 sentence concise description, stakeholder voice.]
@@ -153,6 +156,8 @@ Universal section structure: **header → diagram → prose**. Applied uniformly
 - [openai](./openai/) — [one-line purpose, stakeholder voice]
 - [converse](./converse/) — [one-line purpose]
 ```
+
+The H1 is a Markdown link to the subject's repository URL. Directly under the H1, a **metadata block** identifies the subject: at minimum, the subject type (`Library:`, `Capability:`, `Service:`, etc.) keyed to its github URL without the `https://` prefix, and `Language:`. Expand the block for more complex subjects (e.g., a capability spanning multiple components, a deployment topology — keys like `Components:`, `Deployment:`, `Interfaces:` apply where they communicate something load-bearing).
 
 The "Implementations" section is exempt from the universal rule — it's navigational (links to sub-module sub-directories), not technical content. Headings name the content domain not the audience. Voice escalates with fidelity (stakeholder at H1, IT/DevOps under operational, developer under specification); within a tier, voice stays consistent across H2 and its H3 children.
 

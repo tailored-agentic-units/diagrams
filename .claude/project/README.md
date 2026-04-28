@@ -7,7 +7,7 @@ Multi-phase work on the TAU diagramming infrastructure. Each phase is its own Cl
 | # | File | Status | Goal |
 |---|---|---|---|
 | 01 | [`01-catalog-infrastructure.md`](./01-catalog-infrastructure.md) | **complete** | Lock down the catalog and `design/*` as the foundational ingredient reference. Audit catalog files for design-system violations. |
-| 02 | [`02-skill-development.md`](./02-skill-development.md) | **complete** | Author a layered set of five skills (`typst-diagrams`, `diagram-design-system`, `diagram-ingredients`, `diagram-authoring`, `tau-diagrams`) at `~/tau/diagrams/.claude/skills/`. Closed with the catalog → ingredients refactor: `catalog/` decomposed into `ingredients/` (5 axis sub-directories, 57 standalone single-concept diagrams, 5 axis essence diagrams, 6 narrative READMEs). |
+| 02 | [`02-skill-development.md`](./02-skill-development.md) | **complete** | Author a layered set of five skills (`typst-diagrams`, `diagram-design-system`, `diagram-ingredients`, `diagram-authoring`, `tau-diagrams`) at `~/tau/diagrams/.claude/skills/`. Closed with the catalog → ingredients refactor: `catalog/` decomposed into `ingredients/` (5 axis sub-directories, 57 standalone single-concept diagrams, 5 axis overview diagrams, 6 narrative READMEs). |
 | 03 | [`03-core-tau-diagrams.md`](./03-core-tau-diagrams.md) | pending | Design the diagram generation process (planning → generation → validation), then build core TAU library + signal flow diagrams (protocol/, format/, provider/, agent/, tau/). Seed the blueprints concept. |
 | 04 | [`04-advanced-tau-diagrams.md`](./04-advanced-tau-diagrams.md) | pending | Apply skills + blueprints to `~/tau/orchestrate` and `~/code/herald`. |
 

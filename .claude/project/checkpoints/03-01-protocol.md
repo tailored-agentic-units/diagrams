@@ -4,10 +4,10 @@
 
 `protocol/` library, 2-tier (collapsed):
 
-- `protocol/core/readme.typ` — stakeholder essence (4-layer stack: agent / provider / format / protocol with capability pills inside protocol)
+- `protocol/core/readme.typ` — stakeholder overview (4-layer stack: agent / provider / format / protocol with capability pills inside protocol)
 - `protocol/specification/readme.typ` — package architecture across three conceptual levels (level 0 primitives → level 1 output shapes → level 2 model runtime)
 - `protocol/specification/response-shapes.typ` — response architecture (discriminated union via sealed `ContentBlock`, parallel `StreamingResponse`, structurally separate `EmbeddingsResponse`)
-- `protocol/README.md` — H1 essence + stakeholder prose, H2 Specification + package diagram + dev prose, H3 Response Structures + response-shapes diagram + dev prose
+- `protocol/README.md` — H1 overview + stakeholder prose, H2 Specification + package diagram + dev prose, H3 Response Structures + response-shapes diagram + dev prose
 
 All renders produced dual-theme SVG pairs.
 

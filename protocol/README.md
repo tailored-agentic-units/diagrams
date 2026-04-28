@@ -1,8 +1,11 @@
-# Protocol
+# [protocol](https://github.com/tailored-agentic-units/protocol)
+
+Library: github.com/tailored-agentic-units/protocol  
+Language: Go
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./core/readme-dark.svg">
-  <img src="./core/readme-light.svg" alt="protocol — essence" width="100%">
+  <img src="./core/readme-light.svg" alt="protocol — overview" width="100%">
 </picture>
 
 The protocol library is the foundation from which every TAU agent is built upon. It defines the shared types for messages, responses, model capabilities, and streamed output — the vocabulary every layer above speaks — so format, provider, and agent can be substituted independently.
