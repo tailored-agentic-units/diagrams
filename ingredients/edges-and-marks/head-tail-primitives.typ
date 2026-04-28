@@ -4,7 +4,6 @@
 
 #set page(width: auto, height: auto, margin: tokens.pad-inside-container, fill: palette.surface)
 #set text(font: tokens.font, size: tokens.size-body, fill: palette.ink)
-#show raw: r => text(fill: palette.purple.stroke, r)
 
 #let column-title(s) = align(center + horizon, text(size: tokens.size-caption, weight: tokens.weight-bold, fill: palette.ink-muted, upper(s)))
 #let mono-code(s) = raw(s)

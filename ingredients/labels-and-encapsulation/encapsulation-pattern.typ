@@ -4,7 +4,6 @@
 
 #set page(width: auto, height: auto, margin: tokens.pad-inside-container, fill: palette.surface)
 #set text(font: tokens.font, size: tokens.size-body, fill: palette.ink)
-#show raw: r => text(fill: palette.purple.stroke, r)
 
 #let _title(s) = text(size: tokens.size-body, weight: tokens.weight-bold, fill: palette.ink, s)
 #let _kind(s, on-hue: palette.ink-muted) = text(size: tokens.size-label, weight: tokens.weight-light, fill: on-hue, style: "italic", "(" + s + ")")

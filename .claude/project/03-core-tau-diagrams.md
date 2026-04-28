@@ -1,83 +1,241 @@
-# Phase 03 — core TAU diagrams + generation process
+# Phase 03 — core TAU diagrams
 
-Two-part scope:
+Produce the first opinionated diagram suite consuming the phase 02 toolkit. One sub-directory per core library (`protocol`, `format`, `provider`, `agent`) plus a cross-cutting `tau` capstone. Each sub-directory documents its subject to up to three audience tiers (stakeholders → IT/DevOps → developers) with diagrams + audience-voiced prose. Sub-modules under `format/` and `provider/` are first-class peers, each with their own sub-directory.
 
-1. **Process design**: identify the diagram generation pipeline Claude moves through in a session — likely planning → generation → validation, but verify the shape against actual practice.
-2. **Generation**: produce the core TAU library + signal flow diagrams using that process. Libraries in scope: `protocol/`, `format/`, `provider/`, `agent/`. Signal flow: `tau/`. **`orchestrate/` is phase 04, not here.**
-
-After the suite is generated, evaluate which compositions repeat enough to be promoted into **diagram blueprints** (templates that standardise common layouts without re-deriving them per diagram).
+This phase is also the validation pass for the design / ingredient / skill / subagent infrastructure. Friction surfaced during authoring is resolved between libraries — the validated toolkit is a parallel deliverable to the diagrams.
 
 ## Bootstrap
 
-1. **`./README.md`** — cross-cutting concerns (tool selection, design foundation, single font, render pipeline, toolkit philosophy, blueprints framing).
+1. **`./README.md`** — cross-cutting concerns (toolkit philosophy, design foundation, single font, render pipeline, dual-theme embedding).
 2. **Memory** at `/home/jaime/.claude/projects/-home-jaime-tau/memory/`:
-   - `feedback_diagram_toolkit_not_ruleset.md`
-   - `feedback_one_diagram_one_concept.md` — each diagram source = one output artifact at full resolution
-   - `feedback_shape_vs_text.md` — shape kind = entity identity; metadata is structured text
+   - `feedback_diagram_toolkit_not_ruleset.md` — non-negotiable framing
+   - `feedback_one_diagram_one_concept.md` — each `.typ` source = one output artifact
+   - `feedback_shape_vs_text.md` — shape kind is identity; metadata is structured text
+   - `feedback_essence_diagram_naming.md` — `readme.typ` for the leading essence diagram
+   - `feedback_general_purpose_skills.md`, `feedback_diagram_toolkit_not_ruleset.md`
    - `project_typst_design_system.md`, `project_typst_workspace.md`, `reference_typst_fletcher_pitfalls.md`
-   - `reference_diagrams_repo.md` — diagrams repo is at `github.com/tailored-agentic-units/diagrams`
-3. **Skill** — `~/tau/diagrams/.claude/skills/typst-diagrams/` is the primary tool. Invoke it at session start.
-4. **Reference archive** — `~/tau/d2/` holds the v0 d2 diagrams. Use them to **understand intent** (what was the diagram trying to communicate?) — do **not** treat them as templates to port. The Typst+Fletcher architecture is different in shape and capability; a fresh visualisation strategy is part of this phase's job.
+   - `reference_github_picture_dual_theme.md` — embed pattern
+3. **Skills** — invoke `tau-diagrams` at session start; it composes the four lower skills (`diagram-authoring`, `diagram-ingredients`, `diagram-design-system`, `typst-diagrams`).
+4. **Subagent** — `~/tau/diagrams/.claude/agents/technical-writer.md`. Invoke at the start of every library's authoring loop; receive structured findings before any `.typ` source is written. Sessions running from `~/tau/` discover the agent via a symlink at `~/tau/.claude/agents/technical-writer.md` → the canonical path; the canonical file lives in the diagrams repo, the symlink keeps it discoverable from the parent workspace.
+5. **Source libraries** — `~/tau/{protocol,format,provider,agent}/` (READMEs + `doc.go` + package layout). The technical-writer reads these in its own context.
 
 ## Current state
 
-Not started. Phase 02 must be done (skill validated).
+Phase 02 complete (five skills + ingredients refactor). No library sub-directories exist under `~/tau/diagrams/` yet. Phase 04 (`orchestrate`, `herald`) is blocked on this phase.
 
-## Part 1 — process design
+## Approach
 
-Before generating anything, work out the pipeline. Candidate phases:
+One library at a time, in dependency order. `protocol` is the pilot — walk it first; carry refinements forward into the rest.
 
-- **Planning**: gather intent (what does this library do, who reads this diagram, what relationships matter?). Identify entities (modules, services, operators, etc.) and relationships (calls, events, ownership). Decide which catalog ingredients fit (shapes, edges, layout pattern). Produce a written sketch / outline of the diagram before any Typst is written.
-- **Generation**: compose the Typst source from `design/` + catalog ingredients per the skill's references. Render dual-theme.
-- **Validation**: render → review against the planning intent → critique cycles. Does the diagram answer the question its planning step posed? Is anything redundant? Can the visualisation reduce cognitive load further?
+For each library, the authoring loop is:
 
-Open questions to resolve as part of process design:
+1. **Invoke `technical-writer`** subagent against the target library. Receive structured findings: purpose statement, recommended audience tier count (2 or 3), per-tier diagram concept proposals, audience-voiced prose drafts, sub-component inventory, open questions.
+2. **Review findings with the user**, resolve open questions, confirm tier count.
+3. **Author `readme.typ`** (essence diagram) using `tau-diagrams` skill conventions. Render dual-theme. Write the leading description prose underneath in stakeholder voice.
+4. **Author each remaining tier** in order. Per-section pattern: header → `.typ` source → render → prose. Diagram first; prose expands on it.
+5. **Verify renders** in GitHub Markdown preview (light + dark theme switching).
+6. **Capture toolkit friction** as notes only — do not edit toolkit mid-library. Refine diagrams + README prose freely.
+7. **For each sub-module** (`format/openai`, `format/converse`, `provider/{ollama,azure,bedrock}`): repeat steps 1–6 inside the sub-module's directory.
+8. **Apply toolkit refinements** between libraries: edit `~/tau/diagrams/{design,ingredients}/`, `~/tau/diagrams/.claude/skills/`, and `~/tau/diagrams/.claude/agents/technical-writer.md` as the captured friction directs. Log each delta under [Toolkit refinements applied](#toolkit-refinements-applied).
+9. **Write a checkpoint** at `~/tau/diagrams/.claude/project/checkpoints/03-NN-<library>.md`, then commit + push the diagrams repo. One commit per checkpoint, in the established phase style (`phase 03 <library>: <multi-concern summary>`). User clears session context and resumes with `Initialize: <checkpoint path>`.
 
-- Are there sub-phases (e.g., is "planning" actually planning + research)? Does the user want to be in the loop at planning, or does Claude propose-and-iterate?
-- How is intent captured between planning and generation — a markdown stub committed alongside the `.typ` file?
-- What does validation look like when the user is not in the room? (Self-critique against intent? Render and visually inspect via Read tool on the SVG?)
-- Does process apply uniformly to library overviews and signal flow diagrams, or do they need distinct sub-processes?
+## Sub-directory layout
 
-Treat the process design as the first artifact this phase produces. Land it as a doc inside `~/tau/diagrams/` (probably `~/tau/diagrams/PROCESS.md` or similar) before generating any diagrams. The skill from phase 02 may need a small update to reference the process.
+Tiers are sub-directories, not files. Each tier may contain a single diagram or many — complex subjects often need multiple diagrams at the same fidelity level.
 
-## Part 2 — generate the core diagrams
+```
+diagrams/<library>/
+├── README.md
+├── core/                       # level-1 (stakeholder, or non-dev overview when 2-tier)
+│   └── readme.typ              # tier essence — always present
+├── operational/                # level-2 (omit entirely when 2-tier)
+│   ├── readme.typ              # tier essence
+│   └── <name>.typ              # additional diagrams as the subject warrants
+└── specification/              # level-3 / technical
+    ├── readme.typ              # tier essence
+    └── <name>.typ              # additional diagrams
+```
 
-Once the process is defined, run it for each target:
+Each tier directory's `readme.typ` is its essence (consistent with `feedback_essence_diagram_naming.md`). Additional diagrams within a tier are content-named (`wire-flow.typ`, `registry.typ`, etc.). Whether a tier has one diagram or many is decided per library based on subject complexity.
 
-| Target | Type | Notes |
-|---|---|---|
-| `~/tau/diagrams/protocol/` | library overview | One overview diagram per library — the public surface and key internal structure |
-| `~/tau/diagrams/format/` | library overview | Same |
-| `~/tau/diagrams/provider/` | library overview | Same |
-| `~/tau/diagrams/agent/` | library overview | Same |
-| `~/tau/diagrams/tau/` | signal flow | Cross-library request flow showing how a single request traverses the libraries |
+Sub-modules nest with the same pattern recursively:
 
-For each: planning doc → Typst source → rendered SVGs → validation pass. Embed via the dual-theme `<picture>` pattern in each library's README.
+```
+diagrams/format/
+├── README.md
+├── core/
+│   └── readme.typ
+├── operational/
+│   └── readme.typ
+├── specification/
+│   ├── readme.typ
+│   └── registry.typ
+├── openai/
+│   ├── README.md
+│   ├── core/
+│   │   └── readme.typ
+│   └── specification/          # sub-modules likely 2-tier
+│       └── readme.typ
+└── converse/
+    └── ...
+```
 
-### Reference archive
+Renders produce dual-theme pairs (`<tier>/readme-{light,dark}.svg`, `<tier>/<name>-{light,dark}.svg`) per the `tau-diagrams` standard.
 
-For each library, before planning, read whatever exists under `~/tau/d2/` (e.g., `~/tau/d2/protocol/`) to understand what the v0 diagram tried to convey. Inputs only — not templates. The Typst architecture supports patterns (composite shapes, custom shapes, encapsulated containers, parallel edges, layered routing) that d2 didn't, so re-deriving the visualisation strategy from intent often beats porting.
+## Audience-tier menu
 
-## Blueprints — once the suite exists
+Default: three tier directories.
 
-After the 5-target suite is complete, examine the generated diagrams for recurring compositions:
+- **`core/`** — stakeholder essence. What this is and why it exists in TAU. Stakeholder voice.
+- **`operational/`** — IT/DevOps view. What it interfaces with, where it runs, what an operator needs to know. Operator voice.
+- **`specification/`** — developer specification. Types, methods, composition, registry shape. Developer voice.
 
-- Library overviews probably share structure (public-API band on one side, internal modules grouped, dependencies arrowed). If 3+ overviews share a layout, extract it as a blueprint.
-- Signal flows may have a consistent header (request entry point) → fan-out → outputs shape. If recognisable, extract.
+Collapsed (when subject doesn't sustain a separate operational view): two tier directories.
 
-A **blueprint** is descriptive, not prescriptive — it's a template a diagram can opt into, not a rule it must follow. Blueprints live alongside the design system but are clearly marked as "blueprint, opt-in" not "convention, default-on". Likely location: `~/tau/diagrams/blueprints/` with each blueprint as `<name>.typ` exporting closures + a `<name>.md` documenting the intent.
+- **`core/`** — non-developer overview (combined stakeholder + IT view).
+- **`specification/`** — developer specification.
 
-The blueprints concept carries forward into phase 04 — when herald or orchestrate diagrams overlap with library-overview shape, reuse rather than re-derive.
+Tier count is decided per library during the technical-writer's findings review. Within each tier, the count of diagrams is also a per-library decision: a simple tier may have only `readme.typ`; a complex tier may have several content-named diagrams alongside it.
+
+Sub-modules are first-class peers: they express platform flexibility/extensibility, which matters at every audience tier. They are not buried inside the parent's `specification/`.
+
+## README pattern
+
+Universal section structure: **header → diagram → prose**. Applied uniformly at H1 (with the level-1 essence from `core/readme.typ`), H2 per tier (with that tier's `readme.typ`), and H3 per additional diagram in a multi-diagram tier. The diagram orients the reader; the prose expands.
+
+```md
+# [Library]
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./core/readme-dark.svg">
+  <img src="./core/readme-light.svg" alt="[library] — essence" width="100%">
+</picture>
+
+[1–2 sentence concise description, stakeholder voice.]
+
+## [Operational heading]   ← omit when 2-tier
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./operational/readme-dark.svg">
+  <img src="./operational/readme-light.svg" alt="..." width="100%">
+</picture>
+
+[Prose in IT/DevOps voice — expands on the operational tier's leading diagram.]
+
+### [Sub-concept heading]   ← when operational/ has additional diagrams
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./operational/<name>-dark.svg">
+  <img src="./operational/<name>-light.svg" alt="..." width="100%">
+</picture>
+
+[Operator-voice prose specific to this diagram.]
+
+## [Specification heading]
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./specification/readme-dark.svg">
+  <img src="./specification/readme-light.svg" alt="..." width="100%">
+</picture>
+
+[Prose in developer voice — expands on the specification tier's leading diagram.]
+
+### [Sub-concept heading]   ← when specification/ has additional diagrams
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./specification/<name>-dark.svg">
+  <img src="./specification/<name>-light.svg" alt="..." width="100%">
+</picture>
+
+[Developer-voice prose specific to this diagram.]
+
+## Implementations          ← only when sub-modules exist
+- [openai](./openai/) — [one-line purpose, stakeholder voice]
+- [converse](./converse/) — [one-line purpose]
+```
+
+The "Implementations" section is exempt from the universal rule — it's navigational (links to sub-module sub-directories), not technical content. Headings name the content domain not the audience. Voice escalates with fidelity (stakeholder at H1, IT/DevOps under operational, developer under specification); within a tier, voice stays consistent across H2 and its H3 children.
+
+## Library order
+
+| # | Subject | Tiers | Sub-modules |
+|---|---|---|---|
+| 1 | `protocol/` (pilot) | likely 2 | — |
+| 2 | `format/` | 3 | `openai`, `converse` |
+| 3 | `provider/` | 3 | `ollama`, `azure`, `bedrock` |
+| 4 | `agent/` | 3 | — |
+| 5 | `tau/` (cross-cutting capstone) | 3 | — |
+
+`tau/` shows the cross-library signal flow (protocol → format → provider → agent for a single request) and is the last subject because it composes vocabulary from the prior four.
+
+## Toolkit refinements applied
+
+Running list. One line per delta: `<layer>: <what changed>`. Filled in between libraries.
+
+### Protocol pilot (2026-04-28)
+
+- **subagent (technical-writer):** Loop step 2 + Purpose-section instructions tightened to require structural-role articulation (what the subject standardizes/orchestrates/mediates/exposes/routes), not just type enumeration.
+- **mise pipeline:** added `render-file <path>` task (uses mise's `usage` spec) so single-diagram iteration renders only the target file. Both `render` and `render-file` documented in `tau-decisions.md`.
+- **bootstrap (project doc):** Bootstrap section now states the subagent-symlink convention — `~/tau/.claude/agents/<name>.md → ~/tau/diagrams/.claude/agents/<name>.md` — so sessions running from `~/tau/` discover agents that live in the diagrams repo.
+- **typst-diagrams skill (`references/fletcher-pitfalls.md`):** added `shape: none` pitfall — fletcher 0.5.8 errors with `expected function, found none`; use `shape: rect, fill: none, stroke: none` for label-only nodes.
+- **tau-diagrams skill (`references/tau-decisions.md`):** retired the global purple raw-tint convention; tinting is now local-only. Removed `#show raw: r => text(fill: palette.purple.stroke, r)` from all 28 ingredient sources.
+- **diagram-design-system skill (`references/palette-pattern.md`):** documented the hue-quad usage convention — `ink` is for accent text (kind labels, single-word identifiers); body content on a hue fill uses neutral `palette.ink` for higher contrast.
+
+## Checkpoints
+
+After every library completes (artifacts rendered, toolkit refinements applied, READMEs verified in GitHub preview), write a checkpoint and commit + push the diagrams repo. One commit per checkpoint covering all checkpoint-scoped changes (library artifacts + toolkit refinements + checkpoint file + project doc updates). Checkpoint files live at:
+
+```
+~/tau/diagrams/.claude/project/checkpoints/
+├── 03-01-protocol.md     ← after protocol pilot
+├── 03-02-format.md       ← after format + openai + converse
+├── 03-03-provider.md     ← after provider + ollama + azure + bedrock
+├── 03-04-agent.md
+└── 03-05-tau.md          ← phase 03 close
+```
+
+Numeric prefix `03-NN-` preserves phase + library order. Sub-modules complete with their parent — no per-sub-module checkpoint.
+
+User resumes with `Initialize: <checkpoint path>`.
+
+**Checkpoint file template:**
+
+```md
+# Phase 03 checkpoint — after [library]
+
+## Just completed
+- [library/sub-module artifacts produced, one-liners]
+
+## Next
+- [next library or step in sequence]
+
+## Toolkit deltas since previous checkpoint
+- design / ingredients / skills / subagent: [what changed and why, one-liners]
+
+## Open threads
+- [unresolved decisions or notes carrying forward — usually empty]
+
+## Resume protocol
+1. Read this checkpoint file.
+2. Read `~/tau/diagrams/.claude/project/03-core-tau-diagrams.md`.
+3. Read `~/tau/diagrams/.claude/agents/technical-writer.md`.
+4. Skim the most recently completed library's `diagrams/<lib>/README.md` to anchor on current voice and pattern.
+5. Confirm with user before resuming.
+```
+
+**Validation signal.** When a fresh session resumes from a checkpoint and finds gaps — the technical-writer doesn't know about a recent skill change, the project doc lacks a captured decision, the README pattern feels under-specified for the next subject — those gaps become the first friction note of the next library's authoring loop. Clean resumes accumulate as evidence the toolkit is self-contained; painful resumes drive the next between-library refinement.
 
 ## Done criteria
 
-- [ ] Process design committed (likely `~/tau/diagrams/PROCESS.md`); user reviews and signs off on the pipeline shape.
-- [ ] All 5 targets have planning docs, rendered SVGs (light + dark), and a validation pass.
-- [ ] Each library README embeds its overview via the dual-theme `<picture>` pattern.
-- [ ] Blueprints evaluated; if any extracted, they live under `~/tau/diagrams/blueprints/` with intent docs.
-- [ ] Skill (phase 02) updated if process design surfaces a missing reference / convention.
-- [ ] Diagrams repo committed (remote re-attach decision is the user's — do not push without explicit go-ahead per `memory/reference_diagrams_repo.md`).
+- [ ] 5 library sub-directories under `~/tau/diagrams/` (`protocol`, `format`, `provider`, `agent`, `tau`), each with README + rendered dual-theme SVG pairs for all declared tiers.
+- [ ] 5 sub-module sub-directories: `format/{openai,converse}`, `provider/{ollama,azure,bedrock}`, each with README + renders.
+- [ ] `technical-writer` subagent committed at `~/tau/diagrams/.claude/agents/technical-writer.md`.
+- [ ] All diagrams honor `tau-diagrams` skill conventions (palette, font, embed pattern, render-mode marker).
+- [ ] READMEs render correctly on GitHub with light/dark theme switching.
+- [ ] Toolkit refinements applied; the [Toolkit refinements applied](#toolkit-refinements-applied) section lists every delta.
+- [ ] 5 checkpoint files exist under `checkpoints/`. The final checkpoint (`03-05-tau.md`) has been resumed cleanly in a fresh session as the smoke test of infrastructure self-containment.
+- [ ] Diagrams repo committed and pushed at every checkpoint (5 commits to `origin/main`, one per library milestone).
 
 ## Hand-off to phase 04
 
-When core diagrams + blueprints are settled: start a fresh session with `04-advanced-tau-diagrams.md`. Carry the process + blueprints forward to apply against `~/tau/orchestrate` and `~/code/herald`.
+Phase 03 establishes the diagram vocabulary, the per-subject README pattern, the `technical-writer` subagent, and the validated toolkit. Phase 04 reuses all of it for `~/tau/orchestrate` and `~/code/herald`. Start a fresh session with `04-advanced-tau-diagrams.md`.

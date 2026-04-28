@@ -3,7 +3,6 @@
 
 #set page(width: 560pt, height: auto, margin: tokens.pad-inside-container, fill: palette.surface)
 #set text(font: tokens.font, size: tokens.size-body, fill: palette.ink)
-#show raw: r => text(fill: palette.purple.stroke, r)
 
 #stack(dir: ttb, spacing: tokens.gap-structured-text * 2,
   [Inline raw: #raw("fletcher.shapes.hexagon") appears identical-weight to prose; the purple tint differentiates it.],

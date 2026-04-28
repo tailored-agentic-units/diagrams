@@ -85,6 +85,25 @@ Reach for this any time a cell renders in the wrong state — it's almost always
 
 This pattern is also the typical way to differentiate `raw()` content from prose when both render in the same font family — a tinting rule on raw spans gives code a visual marker.
 
+## `shape: none` errors at draw time
+
+**Symptom.** A node with `shape: none` errors during compile: `expected function, found none` from `(node.shape)(node, extrude)` in fletcher's `draw.typ`.
+
+**Cause.** Fletcher invokes `node.shape` as a function at draw time. `none` isn't callable.
+
+**Workaround.** For label-only nodes (no visible boundary), use an invisible rect:
+
+```typst
+node((0, row),
+  align(right, text(...)),
+  shape: fletcher.shapes.rect,
+  fill: none,
+  stroke: none,
+)
+```
+
+The rect contributes the node's bounding box for layout but renders no border or fill.
+
 ## Edge label position can collide with endpoints
 
 **Symptom.** With `label-pos: 0.5` (default) on a short edge between adjacent shapes, the label visually sits inside or overlaps one of the endpoint shapes.

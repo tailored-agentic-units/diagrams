@@ -47,6 +47,8 @@ Each chromatic hue exposes four colors:
 
 Without `ink`, labels over a tinted fill end up neutral and visually disconnected from the surrounding hue. Without `divider`, internal rules either clash (neutral grey over a tinted fill) or vanish (same as fill). The four-attribute quad is the smallest set that supports both labeled, separated, multi-hue-tinted nodes.
 
+**Use `ink` for accent text, not body text.** `ink` is calibrated for short, hue-coherent labels — kind annotations, category badges, single-word identifiers — where same-hue text reads as a stylistic accent. For longer body content over a hue fill (field grids, type listings, multi-line descriptions), prefer the global neutral `palette.ink` for higher contrast; same-hue text loses readability across a longer run.
+
 ## Constructor for the quad
 
 A small helper keeps the quad consistent. The divider can be derived as a 50/50 mix of fill and stroke so authors don't have to pick a fourth value by hand:

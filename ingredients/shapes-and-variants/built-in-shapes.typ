@@ -4,7 +4,6 @@
 
 #set page(width: auto, height: auto, margin: tokens.pad-inside-container, fill: palette.surface)
 #set text(font: tokens.font, size: tokens.size-body, fill: palette.ink)
-#show raw: r => text(fill: palette.purple.stroke, r)
 
 #let shape-cell(name, shape-fn) = stack(dir: ttb, spacing: tokens.gap-structured-text * 1.5,
   align(center + horizon,

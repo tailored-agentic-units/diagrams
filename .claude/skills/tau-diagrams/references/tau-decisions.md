@@ -51,13 +51,7 @@ Embedded by name through Typst's font-finding (system font); no font files commi
 
 **Glyph integration is required.** TAU diagrams use inline glyphs (status indicators, infrastructure markers, brand badges, edge-kind decorations); the font must be patched.
 
-**Code tinting:** under the single-font palette, prose and `raw()` blend by default. Each diagram declares a `show raw:` rule that tints code with a hue:
-
-```typst
-#show raw: r => text(fill: palette.purple.stroke, r)
-```
-
-**Purple** is the project default (any hue works; pick whichever harmonizes with the diagram). Without this rule, code visually disappears into prose.
+**Code tinting:** no global `show raw:` rule. Apply tinting locally where a specific diagram benefits — e.g., a scoped `show raw:` inside a hue-filled card body that re-tints code text to harmonize with the card. A diagram-wide raw tint is incompatible with hue-filled elements (the global hue clashes against any other hue's fill).
 
 ## Tokens: ~/tau/diagrams/design/tokens.typ
 
@@ -106,8 +100,9 @@ When generating a TAU diagram, import these tokens (`#import "../design/tokens.t
 TAU uses **mise** as its task runner.
 
 ```bash
-mise run render   # compiles every .typ except design/ modules; dual-theme; static/responsive aware
-mise run clean    # removes all rendered SVGs
+mise run render                  # compile every .typ except design/ modules; dual-theme; static/responsive aware
+mise run render-file <path.typ>  # compile a single .typ to its dual-theme SVG pair (same render-mode logic as render)
+mise run clean                   # remove all rendered SVGs
 ```
 
 Implementation lives at `~/tau/diagrams/mise.toml`. The task walks the directory tree, compiles each `.typ` source for both `light` and `dark` themes via `--input theme=…`, and conditionally strips fixed pt-dimensions from the SVG root element based on the `// render: static` magic comment.
