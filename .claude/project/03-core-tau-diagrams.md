@@ -108,6 +108,10 @@ Universal section structure: **header → diagram → prose**. Applied uniformly
 
 <Type>: <github-url-without-https>
 Language: <language>
+Native dependencies:                          ← only when subject has documented TAU deps
+- [<dep>](../<dep>/)                          ← relative link to sibling diagrams sub-directory
+External dependencies:                        ← only when subject has third-party deps
+- [<package>](<repository-url>)               ← prefer repository; fall back to docs / product site
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./core/readme-dark.svg">
@@ -159,7 +163,18 @@ Language: <language>
 
 The H1 is a Markdown link to the subject's repository URL. Directly under the H1, a **metadata block** identifies the subject: at minimum, the subject type (`Library:`, `Capability:`, `Service:`, etc.) keyed to its github URL without the `https://` prefix, and `Language:`. Expand the block for more complex subjects (e.g., a capability spanning multiple components, a deployment topology — keys like `Components:`, `Deployment:`, `Interfaces:` apply where they communicate something load-bearing).
 
-The "Implementations" section is exempt from the universal rule — it's navigational (links to sub-module sub-directories), not technical content. Headings name the content domain not the audience. Voice escalates with fidelity (stakeholder at H1, IT/DevOps under operational, developer under specification); within a tier, voice stays consistent across H2 and its H3 children.
+**Dependency fields.** Two distinct kinds of dependency get distinct fields:
+
+- **`Native dependencies:`** — dependencies within the TAU ecosystem (libraries and services we own, author, and document). Each entry is a relative link to the sibling diagrams sub-directory (`../<dep>/`); undocumented native imports stay invisible in the header.
+- **`External dependencies:`** — third-party dependencies. Each entry links to the package's source repository (preferred), falling back to documentation or product site only when the package is not open-source (rare).
+
+Both fields are **omitted when empty**; the absence of `External dependencies:` is itself meaningful — it makes TAU's commitment to minimizing external dependencies and supply-chain surface visible at a glance.
+
+The "Implementations" section is exempt from the universal rule — it's navigational (links to sub-module sub-directories), not technical content.
+
+**Heading conventions.** H2 headings name the **tier** itself (`## Operational`, `## Specification`, plus `## Implementations` for the navigational section), keeping the audience-tier hierarchy visible and consistent across every library's README. H3 headings within a tier name the **content domain** of the sub-concept diagram (`### Data types`, `### Registry`, `### Response Structures`) — not the audience, and not a re-statement of the tier. The Core tier has no H2 heading; the leading `core/readme.typ` overview sits directly under H1 since it carries the subject's stakeholder framing.
+
+Voice escalates with fidelity (stakeholder at H1 / Core, IT/DevOps under Operational, developer under Specification); within a tier, voice stays consistent across H2 and its H3 children.
 
 ## Library order
 
@@ -176,6 +191,19 @@ The "Implementations" section is exempt from the universal rule — it's navigat
 ## Toolkit refinements applied
 
 Running list. One line per delta: `<layer>: <what changed>`. Filled in between libraries.
+
+### Format library (2026-04-30)
+
+Combined pass — absorbs format-authoring friction and the herald OV-1 prelude session (a phase-04 prelude that ran in parallel and surfaced its own conventions for re-use). Details in `~/tau/diagrams/.claude/project/checkpoints/03-02-format.md` and `~/tau/diagrams/.claude/project/04-prelude-herald-ov1.md`.
+
+- **project doc (this file):** README header gained `Native dependencies:` and `External dependencies:` fields; H2 / H3 heading conventions made explicit (H2 = tier name, H3 = content domain).
+- **tau-diagrams skill (`references/tau-decisions.md`):** "Native dependencies in diagrams" — single-shape resolution rule for native deps.
+- **typst-diagrams skill (`references/fletcher-pitfalls.md`):** added empty-content node errors, bend sign convention, inset single-value-only, mark overlay on shape (unsolved).
+- **diagram-ingredients skill (`references/edges-and-marks.md`):** added mirrored label placement, vertical fan-out, conditional fork-and-rejoin, return-edge pattern.
+- **diagram-ingredients skill (`references/labels-and-encapsulation.md`):** added two-node container limitation note, multi-domain band layout, inline pills with optional discriminator marker.
+- **diagram-authoring skill (`SKILL.md`):** added shape-body-as-semantic vs edge-labels-carry-semantics decision section (during herald session).
+- **memory:** `feedback_image_conversion_tool.md` (use `magick`), `feedback_diagram_review_workflow.md` (render and yield to user).
+- **phase-04 prelude artifact:** `04-prelude-herald-ov1.md` written to capture herald-session deltas for phase 04.
 
 ### Protocol pilot (2026-04-28)
 

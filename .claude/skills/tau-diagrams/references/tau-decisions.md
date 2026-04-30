@@ -109,6 +109,14 @@ Implementation lives at `~/tau/diagrams/mise.toml`. The task walks the directory
 
 **Per-file render mode** follows the static / responsive distinction (see [typst-diagrams render-pipeline reference](../../typst-diagrams/references/render-pipeline.md) for the underlying mechanism). TAU's catalog files render static; diagrams embedded in READMEs render responsive.
 
+## Native dependencies in diagrams
+
+When a TAU subject's diagrams reference another TAU subject it depends on (a *native dependency* — a TAU-ecosystem library or service we own, author, and document), the dependency is rendered at **single-shape resolution**: one shape with input/output edges crossing into it, never expanded internals. Drilling into the dependency's internals belongs to *its* documentation, not to the subject's diagrams.
+
+This rule applies at every audience tier — `core/`, `operational/`, and `specification/`. A native dependency that warrants more detail at a tier means the reader should follow its diagrams sub-directory link in the README's `Native dependencies:` header field, not get the detail inline.
+
+External (third-party) dependencies are not bound by the same rule: they have no TAU documentation to drill into, and their treatment in any given diagram is a per-diagram decision rather than a universal convention.
+
 ## Repository conventions
 
 - **Diagrams workspace:** `~/tau/diagrams/`. Source of truth for TAU's design layer, catalog, and blueprints.

@@ -83,22 +83,24 @@ Bends apply when straight routing collides with intervening nodes, when two para
 
 ### Waypoints
 
-Pass a routing string instead of a `(from, to)` pair to step orthogonally:
+Pass intermediate coordinate tuples between the source and destination to step orthogonally:
 
 ```typst
-edge((0, 0), "r,d,r", (2, 2), "->")
+edge((0, 0), (1, 0), (1, 2), (2, 2), "->", "step")
 ```
 
-`"r,d,r"` reads "right, down, right" — three orthogonal segments. Useful for clean flowchart edges where a curved bend would feel out of place.
+The polyline visits each tuple in order: start → first waypoint → next waypoint → … → destination. Useful for clean flowchart edges where a curved bend would feel out of place.
 
-| Routing | Visual |
+| Waypoints | Visual |
 |---|---|
-| `"r,d"` | right, then down |
-| `"d,r"` | down, then right |
-| `"r,d,r"` | step (right-down-right) |
-| `"d,r,d"` | step (down-right-down) |
+| `(0,0), (2,0), (2,2)` | right, then down |
+| `(0,0), (0,2), (2,2)` | down, then right |
+| `(0,0), (1,0), (1,2), (2,2)` | step (right-down-right) |
+| `(0,0), (0,1), (2,1), (2,2)` | step (down-right-down) |
 
-Mix segments freely (`l` for left, `u` for up). The total displacement of the segments must match the displacement from start to end.
+Add as many intermediate tuples as the path needs. Each segment between adjacent tuples is rendered as a straight line; consecutive tuples on the same axis produce orthogonal turns.
+
+**Avoid the relative-direction string form** (`edge((0,0), "r,d", (2,2), "->")`) in Fletcher 0.5.x. It parses each direction component as a separate positional argument, which collides with positional labels (the parser confuses the label for an extra direction step) and can produce zero-length segments that trip a `Adjacent vertices must be distinct` assertion. Explicit coordinate tuples are the reliable canonical form. See `typst-diagrams/references/fletcher-pitfalls.md` for the full diagnostic.
 
 ### Self-loops
 
@@ -142,6 +144,16 @@ edge(from, to, "->",
 
 **`label-side: center`** — places the label on the line itself (the line breaks visually around the label region). Reads as a transformation on the edge ("authorised", "encrypted") rather than as an annotation about it.
 
+**Mirrored label placement** — when two parallel-but-symmetric edges should carry their labels on the same visual side (e.g., two `imports` edges going up into a shared focal node from below-left and below-right), default placement isn't always symmetric. The default chooses a side relative to each edge's walk direction independently, which can put the labels on opposite visual sides. Override one of the two with explicit `label-side: left` (or `label-side: right`) to flip it onto the matching side.
+
+```typst
+// Two edges entering format from sub-modules below; both labels on the outside (visual west / east).
+edge((0, 2), (0, 1), (1, 1), "->", lbl("imports"), label-side: left, ...)   // override flips to outside
+edge((2, 2), (2, 1), (1, 1), "->", lbl("imports"), ...)                      // default already outside
+```
+
+The same override resolves "labels stack vertically with one inside the diagram" issues on shared-trunk forked edges — set the label side explicitly on whichever branch landed on the wrong side.
+
 ## Label fill
 
 Use Fletcher's native `label-fill: <color>` parameter on the edge, not a custom `box(fill: surface, ...)` wrapper:
@@ -178,3 +190,49 @@ edge((0, 0), (1, 0), "->", bend: -25deg, label-fill: palette.surface,
 ```
 
 The bend separation reads as bidirectional — one relationship in each direction. Without the separation, two edges between the same endpoints overlap and the visual collapses.
+
+## Vertical fan-out from a focal node
+
+When a focal node writes to (or reads from) several destinations in parallel — a service writing to both a blob store and a database, a registry handling reads from three callers — stack the destinations vertically at the same x-coord and let edges fan out from the source's shared anchor. Fletcher routes each edge to its destination's y without crossings.
+
+```typst
+// Focal node at (0, 0); destinations stacked at column 1.
+node((0, 0), "service",   <svc>)
+node((1, -1), "blob",     <blob>)
+node((1,  0), "database", <db>)
+node((1,  1), "queue",    <queue>)
+
+edge(<svc>, <blob>,  "->", "store object")
+edge(<svc>, <db>,    "->", "persist record")
+edge(<svc>, <queue>, "->", "publish event")
+```
+
+The destinations' divergent y-positions force the edges to take distinct paths; they share the source anchor so the fan-out reads as "one origin, many sinks" cleanly. Works equally well with the source on the right and destinations to its left (mirrored).
+
+## Conditional fork-and-rejoin
+
+State graphs with branches use stroke style to differentiate unconditional from conditional transitions:
+
+- **Solid** body for unconditional transitions (state `A` always proceeds to state `B`).
+- **Dashed** body for conditional fork branches (state `A` proceeds to either `B` or `C` depending on a guard).
+- A short label on each conditional edge names the guard (`if any flagged`, `if no flag`).
+
+```typst
+edge(<analyze>, <classify>, "->", "")                    // unconditional next
+edge(<analyze>, <re-render>, "-->", "if any flagged")    // conditional fork
+edge(<analyze>, <classify>,  "-->", "if no flag")        // conditional fork
+```
+
+When two conditional edges share endpoints, give one of them a slight `bend: 25deg` so the labels don't collide at the midpoint.
+
+## Return-edge pattern
+
+For acknowledgements, responses, or callbacks that shouldn't compete visually with the forward flow they answer, use a dashed body, a slight bend, and corner anchors that route the edge below (or above) the forward edge:
+
+```typst
+edge(<client>, <server>, "->", "request")
+edge(<server>.south-east, <client>.south-west, "-->", "ack",
+  bend: 25deg, label-fill: palette.surface)
+```
+
+The dashed body marks the edge as a return rather than a forward step; the bend pulls it visually clear of the forward edge it pairs with; the corner anchors (`south-east` / `south-west`) route the curve cleanly below the nodes rather than overlapping their bodies. The bend sign convention is: positive bends toward larger y (down on the default top-origin canvas); flip-test on first render.

@@ -33,6 +33,38 @@ A blueprint, when supplied, slots into step 3 (compose) by pre-deciding layout a
 - **Source materials are inputs, not templates.** Source code, specs, and data clarify *intent*. Mechanically porting them ("five modules, so five rectangles") usually misses the diagram's purpose — the visualization strategy derives from what the diagram needs to communicate, then verifies against the source.
 - **Visual weight tracks meaning.** Heavy ingredients (thick stroke, saturated fill, large size) claim attention. The diagram's headline element should be the visually heaviest; supporting cast recedes.
 
+## Where the relationship semantics live: edge labels vs shape body
+
+Two structural choices for carrying *what* a relationship means:
+
+| Pattern | Reads as | Best for |
+|---|---|---|
+| **Edge-labelled** — relationship name on the edge (`request`, `enqueue`, `translates to`) | "X *does* Y to Z" — verbed, sequential | flows, sequences, pipelines, workflows where the *step name* is the meaningful unit |
+| **Shape-body-as-semantic** — relationship described inside the entity's body description; edges are connectors only | "X *is the thing that* …; Y *is the thing that* …" — contextual, reference | dense architecture overviews where the *entity's role* is what matters and edges are context-dependency |
+
+Edge labels are the default and read naturally for low-density diagrams (≤ 3 edges per node, short labels, clear pairwise transitions). They fail when edge density grows: labels collide, label-fill cutouts compete for visual attention, and waypoint geometry has to be tortured to keep labels readable.
+
+The shape-body-as-semantic pattern moves the relationship's *what* into a short description below each shape's title and (kind) annotation. Edges then carry only direction (and, optionally, mark style for relationship-type variation: `->` for data flow, `-O` for association/dock, `<->` for cycles). The shape's body becomes an entity sketch: title + kind + role description.
+
+A typical shape body in this pattern:
+
+```typst
+[ glyph
+  Title             ← centred
+  (kind)            ← centred
+  ───────           ← hue-aware divider
+  Short role description in one or two lines.  ← left-aligned
+]
+```
+
+Centre the title and (kind); leave the description left-aligned. Centring requires `block(width: 100%, align(center, ...))` — `align(center, ...)` alone doesn't expand to the stack's natural width.
+
+**Choose shape-body-as-semantic when** the diagram is a hub-and-spoke architecture overview, has 5+ entities and 6+ relationships, has natural language relationship descriptions (longer than 2–3 words), or has a focal node where every edge converges on the same shape (the focal-node body has room to describe the relationship to each peer).
+
+**Stay with edge labels when** the diagram is a flow / sequence / pipeline (the edge IS the step), pairwise relationships are simple and named (`calls`, `triggers`), or the same entity participates in many relationships of distinct kinds that need to be distinguished at the edge (e.g., a workflow node that emits, consumes, and persists — three different verbs on three different edges).
+
+The two patterns are not mutually exclusive in a multi-diagram suite. An OV-1 architecture overview can use shape-body-as-semantic while its operational sequence and release-pipeline diagrams use edge labels — the choice is per-diagram, driven by what the diagram is *for*.
+
 ## Blueprints
 
 Blueprints encode recurring diagram patterns as reusable templates. A blueprint is descriptive (a pattern an instance opts into), not prescriptive (a contract an instance must satisfy).

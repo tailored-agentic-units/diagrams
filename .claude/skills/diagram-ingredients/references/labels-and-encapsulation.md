@@ -198,6 +198,125 @@ The container's body is typically a corner caption (`align(top + left, ...)`) la
 
 Edges that cross the container boundary render identically to edges that don't. The container is a background rectangle; edge styling depends on the relationship it carries, not on whether it crosses a boundary.
 
+## Two-node container variant: header above inner shapes
+
+The standard container pattern places the body content (the corner caption) *inside* the rect with `snap: -1`. That works for compact captions (a single short label like `RUNTIME`). It fails when the header content is rich enough — a glyph + title row + a description line — to be tall enough to land in the same vertical band as the inner shapes: with `snap: -1` the entire container, body included, renders behind the inner shapes, so the inner shapes paint over the header text.
+
+**Workaround.** Split the container into two nodes that share inner-node membership:
+
+1. **Foreground header** — a regular node at default layer, positioned spatially *above* the inner shapes. Body carries the header content. `fill: none, stroke: none, inset: 0pt` so it has no visible chrome of its own.
+2. **Background container** — `enclose:` includes the header AND the inner shapes, body is empty (`[]`), `fill: <surface-muted>`, `snap: -1`. This draws the container rectangle behind everything, with its bounding box encompassing both the header and the shapes.
+
+```typst
+// Foreground header — sits at default layer above the inner shapes
+node((header-x, header-y),
+  stack(dir: ttb, spacing: gap-structured-text,
+    grid(columns: (auto, auto), column-gutter: gap-cell, align: (left + horizon, left + horizon),
+      text(size: 18pt, fill: palette.ink-muted, glyph),
+      text(size: size-body, weight: weight-bold, fill: palette.ink, "Container Title"),
+    ),
+    text(size: size-label, fill: palette.ink, "Container description line."),
+  ),
+  shape: fletcher.shapes.rect,
+  fill: none, stroke: none, inset: 0pt,
+  name: <container-header>,
+)
+
+// Background container — fill only, snap behind, encloses header + inner nodes
+node(
+  enclose: (<container-header>, <inner-1>, <inner-2>, <inner-3>),
+  name: <container>,
+  [],
+  shape: fletcher.shapes.rect,
+  fill: palette.surface-muted,
+  stroke: none,                       // fill-only treatment is common here
+  inset: pad-inside-container,
+  corner-radius: radius-container,
+  snap: -1,
+)
+```
+
+The header's coord (`header-x, header-y`) must place it spatially above the inner shapes — they don't overlap in y. The container's `enclose:` makes its bounding box span both, and `snap: -1` puts the rect behind every node, so the header text renders above the rect (foreground) and beside (not over) the inner shapes.
+
+External edges that cross into the container can still address the inner nodes by name (or address the container via `<container>` for a "bundled to the group" semantic).
+
+**When to use this variant**: header content is more than a single short label, or you specifically want the visible structure `[ Title / Description / inner shapes ]` rather than a corner caption. The standard pattern (body inside `snap: -1` container) remains correct for small corner captions.
+
+**Limitation.** The two-node container works only when the header doesn't spatially overlap the inner shapes — the `snap: -1` container renders behind everything, so a header positioned in the same vertical band as the inner shapes ends up hidden behind them. If a future container needs a header that overlaps inner shapes vertically (a compact form factor), this remains an open thread; for now, give the header its own y-band above the inner content.
+
+## Multi-domain band layout
+
+When a diagram spans multiple security or organizational domains — public / IL4 transit / IL6 destination, or dev / staging / prod, or any pipeline that crosses environments — render each domain as a horizontal band using the two-node container pattern stacked. The boundary-crossing between bands becomes the focal element of the diagram.
+
+```typst
+// Each band: foreground header + background container with snap: -1.
+// All bands share surface-muted fill for visual continuity; headers carry the band identity.
+
+// Public band header
+node((0, 0),
+  stack(dir: ttb, spacing: gap-structured-text,
+    text(weight: weight-bold, fill: palette.ink, "Public"),
+    text(size: size-label, fill: palette.ink-muted, "github.com/example/project"),
+  ),
+  fill: none, stroke: none, inset: 0pt, name: <public-header>,
+)
+// inner shapes for public band at (1, 0), (2, 0), …
+node(enclose: (<public-header>, <public-1>, <public-2>),
+  [], fill: palette.surface-muted, stroke: none, snap: -1,
+  inset: pad-inside-container, corner-radius: radius-container,
+)
+
+// IL4 transit band — same structure at row 2
+// IL6 destination band — same structure at row 4
+```
+
+**Reading the bands.**
+
+- All bands share `palette.surface-muted` fill so adjacent bands read as one diagram, not as competing regions. The visual continuity is what makes a single edge crossing two bands feel like a domain transition rather than a teleport.
+- Headers differentiate bands. Title (band name) + a sub-label (the domain identifier — repository URL, environment name, security level) is the typical structure.
+- Edges that cross band boundaries are the focal element. Trigger arrows passing *through* a header zone get masked by the header's opaque fill if the header has one; an `enclose:`-only header (no fill) lets the edge pass cleanly.
+- Compliance-level labels (IL4, IL6, public) are standard public terminology for DoD impact levels — surface them when relevant; they are not sensitive content.
+
+This generalizes to any pipeline that crosses environments, security perimeters, or organizational ownership boundaries. The `core/release.typ` diagram in the herald OV-1 briefing uses this pattern across three security-domain bands.
+
+## Inline pills with optional discriminator marker
+
+A pill-style inline element (rounded rectangle, hue-tinted, short label) is a compact way to surface a capability, attribute, or kind tag inside a node's body. When some pills carry an additional discriminating attribute (e.g., "this protocol supports streaming"), an optional inline glyph appended after the label distinguishes them without adding new pill colors or shapes.
+
+```typst
+#let cap(label, marker: false) = box(
+  inset: (x: 10pt, y: 4pt),
+  radius: 1em,
+  fill: hue.fill,
+  stroke: stroke-thin + hue.stroke,
+  if marker {
+    stack(dir: ltr, spacing: 6pt,
+      text(size: size-label, weight: weight-body, fill: hue.ink, label),
+      text(size: size-label, fill: hue.ink, glyph),  // e.g., "\u{F469}" for nf-oct-pulse
+    )
+  } else {
+    text(size: size-label, weight: weight-body, fill: hue.ink, label)
+  },
+)
+```
+
+Usage:
+
+```typst
+stack(dir: ltr, spacing: gap-cell,
+  cap("chat",       marker: true),    // marked
+  cap("vision",     marker: true),    // marked
+  cap("tools",      marker: true),    // marked
+  cap("embeddings"),                  // no marker — discriminator absent
+)
+```
+
+The marker glyph is the only visual difference between marked and unmarked pills; the label, hue, and shape stay constant. This keeps the inventory readable as one set with a sub-class, rather than two visually distinct sets the reader must reconcile.
+
+**Choose a glyph that signals the attribute semantically.** `nf-oct-pulse` (`\u{F469}`) reads as "live data flow" / "streaming"; `\u{F00C}` (check) reads as "supported" / "enabled"; `\u{F0E7}` (bolt) reads as "fast" / "real-time". The glyph is a discriminator, not decoration — pick one whose silhouette communicates the attribute at a glance.
+
+**Pills without markers stay pills, not omissions.** When a discriminator doesn't apply (the attribute is genuinely absent for that capability), render the pill without the marker rather than omitting it from the row entirely. Omission communicates "this capability isn't supported"; a markerless pill communicates "this capability is supported but lacks the discriminating attribute". The two are different signals; choose the one matching reality.
+
 ## Snap and layering
 
 `snap: -1` on the container pushes it below the inner nodes. Without it, the container renders on top and obscures the inner content. Background containers always carry `snap: -1`.

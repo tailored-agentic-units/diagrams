@@ -13,13 +13,16 @@
       text(size: tokens.size-label, fill: palette.ink, label)),
 )
 
-#let waypoint-demo(direction-str, label) = stack(dir: ttb, spacing: tokens.gap-structured-text,
+// Waypoint demonstrations use explicit coordinate tuples for the path.
+// The relative-direction string form (`"r,d"`) is unreliable in Fletcher 0.5.x
+// — see typst-diagrams/references/fletcher-pitfalls.md.
+#let waypoint-demo(waypoints, label) = stack(dir: ttb, spacing: tokens.gap-structured-text,
   col-header(label),
   diagram(
     spacing: (80pt, 50pt),
     endpoint((0, 0), "a"),
     endpoint((2, 2), "b"),
-    edge((0, 0), direction-str, (2, 2), "->",
+    edge(..waypoints, "->",
       stroke: tokens.stroke-default + palette.green.stroke),
   ),
 )
@@ -29,8 +32,12 @@
   column-gutter: tokens.space-between-shapes,
   align: center + horizon,
 
-  waypoint-demo("r,d",    "right-then-down · \"r,d\""),
-  waypoint-demo("d,r",    "down-then-right · \"d,r\""),
-  waypoint-demo("r,d,r",  "step · \"r,d,r\""),
-  waypoint-demo("d,r,d",  "step · \"d,r,d\""),
+  waypoint-demo(((0, 0), (2, 0), (2, 2)),
+    "right-then-down · " + raw("(0,0), (2,0), (2,2)")),
+  waypoint-demo(((0, 0), (0, 2), (2, 2)),
+    "down-then-right · " + raw("(0,0), (0,2), (2,2)")),
+  waypoint-demo(((0, 0), (1, 0), (1, 2), (2, 2)),
+    "step · " + raw("(0,0), (1,0), (1,2), (2,2)")),
+  waypoint-demo(((0, 0), (0, 1), (2, 1), (2, 2)),
+    "step · " + raw("(0,0), (0,1), (2,1), (2,2)")),
 )

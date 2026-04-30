@@ -104,6 +104,96 @@ node((0, row),
 
 The rect contributes the node's bounding box for layout but renders no border or fill.
 
+## Comma-separated route strings parse as separate arguments
+
+**Symptom.** Two distinct failures, depending on context:
+
+1. `edge((0, 0), "r,d", (2, 2), "->", "label")` — Fletcher reports `Couldn't interpret edge() arguments label. Try using named arguments. Interpreted previous arguments as (vertices: ((0, 0), "r", "d", (2, 2)), marks: "->")`.
+2. `edge((-1, 0), "r,d", (0, 1), "->")` (no label) — Fletcher reports `Adjacent vertices must be distinct.`
+
+**Cause.** Fletcher 0.5.x parses each component of a comma-separated routing string as a *separate positional argument*. `"r,d"` becomes the two strings `"r"` and `"d"`, slotted into the vertex list:
+
+- When a label follows, the parser has already consumed the route components into the vertex list and treats the label string as another position it doesn't know how to interpret.
+- Each relative-direction string (`"r"`, `"d"`, `"l"`, `"u"`) is interpreted as a unit-grid step. With the wrong displacement, the last step lands exactly on the destination tuple, producing a zero-length final segment that trips the polyline draw-time assertion.
+
+A comma-separated route happens to render only when (a) no positional argument follows the destination and (b) the displacement and route together don't produce coincident vertices. The catalog example at `~/tau/diagrams/ingredients/edges-and-marks/waypoints.typ` worked accidentally on both counts; it has been switched to the canonical form below.
+
+**Workaround.** Use explicit coordinate tuples for every waypoint:
+
+```typst
+edge((0, 0), (1, 0), (1, 2), (2, 2), "->", "step")
+```
+
+The polyline visits each tuple in order. Add as many intermediates as the path needs. Plays cleanly with positional labels, `label-fill`, `label-pos`, and any other edge parameter. This is the form already in use across rendered TAU diagrams (see `format/core/readme.typ` for an in-the-wild example).
+
+## Empty-content node errors at draw time
+
+**Symptom.** `node(coord, none, shape: fletcher.shapes.rect, fill: none, stroke: none, inset: 0pt)` errors during compile: `array is empty` from `path` in cetz `drawable.typ`. The intent is a zero-size invisible junction node that exists only as an edge endpoint.
+
+**Cause.** Cetz computes the node's bounding box from its drawn segments. A node with `none` body produces no segments; the path-segments array is empty when the renderer tries to compute bounds.
+
+**Workaround.** Don't use a junction node — use a multi-vertex coord polyline instead, where the would-be junction coord is just an intermediate vertex:
+
+```typst
+// Don't:
+node((1, 2), none, shape: fletcher.shapes.rect, fill: none, stroke: none)
+edge((0, 2), (1, 2), "-", "label")
+edge((1, 2), (2, 1), "->")
+edge((1, 2), (2, 3), "->")
+
+// Do:
+edge((0, 2), (1, 2), (2, 1), "->", "label")
+edge((0, 2), (1, 2), (2, 3), "->")
+```
+
+The two edges share the segment `(0, 2) → (1, 2)`; Fletcher draws each edge independently so the segment renders twice (visually identical to once). The "fork" emerges from the divergent terminal segments. No invisible node needed.
+
+If you genuinely need a node at that coord (e.g., for `enclose:` membership), give it a 1pt invisible box body: `box(width: 1pt, height: 1pt)` — non-empty content satisfies cetz, and the rect remains effectively invisible.
+
+## Bend sign convention is counter-intuitive
+
+**Symptom.** A bent edge curves the opposite way from intuition. Author sets `bend: 25deg` expecting the curve to arc upward; it arcs downward (or vice versa).
+
+**Cause.** Fletcher's bend sign is relative to the from→to vector, but the y-axis on the default canvas points *down* (top-origin). For a horizontal left-to-right edge, "left of from→to" is geometrically up but numerically smaller y; "right of from→to" is geometrically down but numerically larger y. Authors used to math-axis (bottom-origin) y mentally flip the meaning.
+
+**Practical rule (verified empirically across phase 03 + phase 04):** positive `bend` curves toward larger y on Fletcher's default top-origin canvas. For a horizontal left-to-right edge, positive bends *down*; negative bends *up*. For a top-to-bottom vertical edge, positive bends *right*; negative bends *left*.
+
+**Workaround.** On the first render of any bent edge, flip-test: render once with the bend value, render again with its negation, pick whichever direction reads correctly. The cost of one extra render is lower than the cost of debugging an inverted curve in a complex diagram.
+
+## Inset accepts only a single absolute value
+
+**Symptom.** `node(..., inset: (x: 12pt, y: 8pt))` errors with `dictionary has no method to-absolute` at compile time. The intent is asymmetric padding (more horizontal, less vertical) on a node body.
+
+**Cause.** Fletcher 0.5.8 expects `inset` as a single absolute length, not a dictionary. The dictionary form works in Typst's general `box(inset: ...)` API but not in Fletcher's `node(inset: ...)`.
+
+**Workaround.** Use a single absolute value that suits the node:
+
+```typst
+node(..., inset: 10pt)
+```
+
+If asymmetric padding is essential, wrap the body in an inner `box(inset: (x: 12pt, y: 8pt), ...)` and let the node's `inset` be a small additional buffer (or 0):
+
+```typst
+node((0, 0),
+  box(inset: (x: 12pt, y: 8pt), body-content),
+  shape: fletcher.shapes.rect,
+  inset: 0pt,
+  ...
+)
+```
+
+## Mark overlay on shape (unsolved)
+
+**Symptom.** Placing an arrowhead *inside* a shape — for instance, an edge that should terminate visually at a specific point inside a target rect rather than at its boundary — produces clipped arrows in Fletcher 0.5.x. Specifying the destination as a literal coord plus `layer: 1` to render above the shape gives the right z-order, but the arrowhead silhouette itself gets cut off where the shape's draw path masks it.
+
+**Workaround.** Use a mark style that lands cleanly *at* the shape boundary instead of inside:
+
+- `-O` (open large circle) — sits at the boundary edge as a docking association.
+- `->` (standard head) — terminates at the boundary by Fletcher's default routing.
+
+If a "pointer-into-region" semantic is essential, the cleanest fallback is a small unstyled inner node at the target region with its own incoming edge — not a literal-coord destination overlay. This remains an open thread for Fletcher 0.5.x; if a future version exposes a clip-aware overlay primitive, this entry should be revisited.
+
 ## Edge label position can collide with endpoints
 
 **Symptom.** With `label-pos: 0.5` (default) on a short edge between adjacent shapes, the label visually sits inside or overlaps one of the endpoint shapes.
