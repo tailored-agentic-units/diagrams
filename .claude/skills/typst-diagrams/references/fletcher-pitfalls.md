@@ -212,6 +212,12 @@ let event-edge(from, to, label: none, label-pos: 0.5) = edge(from, to, "->",
 
 `label-sep` below 6pt produces visible crowding between the label and the edge line.
 
+**When the label width exceeds the segment length.** Biasing `label-pos` doesn't help — the label is wider than the edge can accommodate, so it overflows whichever endpoint it's biased toward. Three structural fixes:
+
+- **Increase column spacing** to widen the segment: `spacing: (space-between-shapes * 4, space-between-ranks)` gives the label horizontal room before either endpoint.
+- **Switch to a vertical-stack layout** (see [vertical-stack pattern](../../diagram-ingredients/references/edges-and-marks.md)): place cards in a single column and use `label-side: right` / `left` to push labels into the empty horizontal space beside the edge.
+- **Shorten the label** — sometimes the verbose form belongs in prose, and a 1–2 word edge label suffices for the diagram.
+
 ## Edge label fill: native parameter, not a custom box
 
 **Symptom.** Wrapping an edge label in a `box(fill: surface, ...)` produces an unwanted white border in dark mode. The wrapper renders correctly, but Fletcher's auto-wrap renders an outer rectangle at hardcoded white *outside* the custom box.

@@ -117,6 +117,15 @@ This rule applies at every audience tier — `core/`, `operational/`, and `speci
 
 External (third-party) dependencies are not bound by the same rule: they have no TAU documentation to drill into, and their treatment in any given diagram is a per-diagram decision rather than a universal convention.
 
+When a diagram *does* choose to render an external SDK or service boundary — e.g., to show where credential signing actually happens, or where binary frame decoding runs — use a single shape with a **dashed** border. The dashed treatment distinguishes external boundaries from native deps (which use a solid thin border) and reinforces that the contents lie outside TAU's source tree. The two single-shape conventions read together as a vocabulary:
+
+| Reference kind | Border | Signal |
+|---|---|---|
+| Native dep (in-TAU library) | Solid thin | "Drill into its own diagrams to see internals" |
+| External SDK / service boundary | Dashed | "Outside TAU's source tree; contents belong to the third party" |
+
+Examples in TAU diagrams: `protocol.Protocol` and `protostreaming.StreamReader` as native single-shapes throughout `format/` and `provider/` specification diagrams; `azcore.TokenCredential` in `provider/azure/specification/token-source.typ`, `aws-sdk-go-v2` in `provider/bedrock/specification/credentials.typ`, and `aws-sdk-go-v2/eventstream` in `provider/bedrock/specification/eventstream.typ` as external SDK single-shapes with dashed borders.
+
 ## Repository conventions
 
 - **Diagrams workspace:** `~/tau/diagrams/`. Source of truth for TAU's design layer, catalog, and blueprints.

@@ -192,6 +192,15 @@ Voice escalates with fidelity (stakeholder at H1 / Core, IT/DevOps under Operati
 
 Running list. One line per delta: `<layer>: <what changed>`. Filled in between libraries.
 
+### Provider library (2026-05-05)
+
+Captured during provider parent + ollama / azure / bedrock sub-modules. Details in `~/tau/diagrams/.claude/project/checkpoints/03-03-provider.md`.
+
+- **tau-diagrams skill (`references/tau-decisions.md`):** "Native dependencies in diagrams" extended — external SDK / service boundaries render at single-shape resolution with **dashed** border (vs. solid thin for native deps). Two single-shape conventions read together as a vocabulary; example references in azure / bedrock specification diagrams.
+- **diagram-ingredients skill (`references/labels-and-encapsulation.md`):** added Multi-section card body — pattern for splitting a single card into labeled sub-sections (italic-light hue.ink section heads, `v(gap-cell / 2)` separator, no second divider) when one card needs to convey multiple lifecycle phases or method groupings.
+- **diagram-ingredients skill (`references/edges-and-marks.md`):** added Vertical-stack layout for verbose edge labels — when card-to-card relationships need long descriptive labels, stacking cards in a single column with `label-side: right` puts labels in unobstructed horizontal space beside vertical edges.
+- **typst-diagrams skill (`references/fletcher-pitfalls.md`):** "Edge label position" pitfall extended with the label-width-exceeds-segment-length case; three structural fixes documented (increase column spacing 3–5×, switch to vertical-stack layout, shorten label).
+
 ### Format library (2026-04-30)
 
 Combined pass — absorbs format-authoring friction and the herald OV-1 prelude session (a phase-04 prelude that ran in parallel and surfaced its own conventions for re-use). Details in `~/tau/diagrams/.claude/project/checkpoints/03-02-format.md` and `~/tau/diagrams/.claude/project/04-prelude-herald-ov1.md`.

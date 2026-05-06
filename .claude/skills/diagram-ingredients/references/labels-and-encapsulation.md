@@ -80,6 +80,40 @@ The hue-aware `divider()` keeps the rule in the same color family as the surroun
 
 The divider pattern reads as a node split into identity (above) and payload (below) — interfaces with method lists, classes with field lists, services with field schemas.
 
+### Multi-section card body
+
+When a single card needs to convey multiple structurally distinct facets — lifecycle phases (construction vs. runtime), method groupings (identity vs. transport, query vs. mutation), or related dispatch tables (non-streaming vs. streaming variants) — split the body into labeled sub-sections. A small italic-light section heading in the host hue's `ink` introduces each block; the blocks separate with extra vertical whitespace, not a second divider:
+
+```typst
+let _section(s, on-hue) = text(
+  size: size-label, weight: "light", fill: on-hue, style: "italic", s,
+)
+
+stack(dir: ttb, spacing: gap-structured-text,
+  _section("construction — auth_type dispatch", hue.ink),
+  grid(columns: 2, column-gutter: gap-cell, row-gutter: gap-structured-text,
+    raw("default | (empty)"), raw("→ LoadDefaultConfig"),
+    raw("static"),            raw("→ NewStaticCredentialsProvider"),
+    raw("profile"),           raw("→ LoadDefaultConfig + WithSharedConfigProfile"),
+  ),
+  v(gap-cell / 2),
+  _section("runtime — SignRequest(ctx, req, service)", hue.ink),
+  grid(columns: 2, column-gutter: gap-cell, row-gutter: gap-structured-text,
+    raw("1."), raw("hash request body (SHA-256)"),
+    raw("2."), raw("retrieve credentials"),
+    raw("3."), raw("delegate to v4.Signer.SignHTTP"),
+  ),
+)
+```
+
+The pattern keeps related dispatch tables, sequences, or method groups co-located in a single card without the visual heaviness of a second card boundary or a re-introduced divider line. The italic-light treatment of the section labels keeps them subordinate to the host card's title — they read as commentary on the content below them, not as competing headings.
+
+Useful when:
+
+- A type has both construction-time and runtime branching that read together
+- An interface's methods cluster into semantic groups (identity accessors vs. transport methods)
+- A dispatch covers multiple related discriminators that share enough context to belong in the same card
+
 ### Icon + label
 
 Three placements (glyph inventory in [color-and-glyphs](color-and-glyphs.md)):

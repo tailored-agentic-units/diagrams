@@ -236,3 +236,34 @@ edge(<server>.south-east, <client>.south-west, "-->", "ack",
 ```
 
 The dashed body marks the edge as a return rather than a forward step; the bend pulls it visually clear of the forward edge it pairs with; the corner anchors (`south-east` / `south-west`) route the curve cleanly below the nodes rather than overlapping their bodies. The bend sign convention is: positive bends toward larger y (down on the default top-origin canvas); flip-test on first render.
+
+## Vertical-stack layout for verbose edge labels
+
+When card-to-card relationships need verbose descriptive labels (e.g., `embedded — supplies Method() · OtherMethod()`, `Prepare* methods produce *Output`), a horizontal layout often crowds the labels: each edge runs through the narrow gap between adjacent cards, the label centers on the path, and any text wider than the gap overlaps a neighbour. Stacking the cards in a single column and using `label-side: right` (or `left`) pushes the label into the empty horizontal space beside the vertical edge — no neighbour competes for that space:
+
+```typst
+diagram(
+  spacing: (space-between-shapes, space-between-ranks),
+
+  card((0, 0), purple, "Source",  "struct",    <fields-A>),
+  card((0, 1), blue,   "Focal",   "interface", <fields-F>),
+  card((0, 2), purple, "Output",  "struct",    <fields-O>),
+
+  edge((0, 0), (0, 1), "->",
+    text(style: "italic", "embedded — supplies Method() · OtherMethod()"),
+    label-side: right, label-fill: palette.surface, stroke: edge-stroke),
+  edge((0, 1), (0, 2), "->",
+    text(style: "italic", "OtherMethod produces Output"),
+    label-side: right, label-fill: palette.surface, stroke: edge-stroke),
+)
+```
+
+The trade-off is vertical extent: the diagram grows taller in proportion to the number of cards. For two or three related cards with verbose labels, vertical stacking is cleaner than fighting horizontal space; for many cards or short labels, horizontal layout reads more naturally.
+
+Useful when:
+
+- A focal type has 2–3 related helpers, outputs, or inputs that each need a descriptive relationship label
+- Edge labels cannot be shortened without losing semantic content
+- The diagram has narrow horizontal columns that can't spare more space for label runs
+
+Pairs with the [`Edge label position` pitfall](../../typst-diagrams/references/fletcher-pitfalls.md) — vertical stacking is one of the structural fixes when labels exceed available segment length.
