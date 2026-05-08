@@ -192,6 +192,14 @@ Voice escalates with fidelity (stakeholder at H1 / Core, IT/DevOps under Operati
 
 Running list. One line per delta: `<layer>: <what changed>`. Filled in between libraries.
 
+### Agent library (2026-05-07)
+
+Captured during agent parent diagrams (no sub-modules). Details in `~/tau/diagrams/.claude/project/checkpoints/03-04-agent.md`.
+
+- **diagram-ingredients skill (`references/edges-and-marks.md`):** added Convergent-edges tree pattern — N sources sharing one relationship to a target render as N orthogonal edges with overlapping trunk + rail segments, drawing as a single tree branching out to N leaves. Replaces the diagonal-fan pattern that fans into a tangle when N ≥ 3. Shipped with `label-pos` guidance for landing the shared label mid-trunk and a row-spacing tuning note.
+- **diagram-ingredients skill (`references/edges-and-marks.md`):** added L-shape edges with labels in corner whitespace — when a wide label can't fit in the narrow midline gap between two cards, an L-shaped edge route opens a corner rectangle for the label. Includes `label-pos` and `label-side` rule-of-thumb guidance for choosing which segment carries the label.
+- **diagram-ingredients skill (`references/labels-and-encapsulation.md`):** added Operations ledger card — when a focal type has 4+ operations with uniform read/write/delete semantics, consolidate into a single muted card with a 2-column signature → effect grid plus an umbrella edge to the focal type, instead of N separate operation cards with fan-in edges.
+
 ### Provider library (2026-05-05)
 
 Captured during provider parent + ollama / azure / bedrock sub-modules. Details in `~/tau/diagrams/.claude/project/checkpoints/03-03-provider.md`.

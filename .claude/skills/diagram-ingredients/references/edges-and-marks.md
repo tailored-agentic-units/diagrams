@@ -267,3 +267,45 @@ Useful when:
 - The diagram has narrow horizontal columns that can't spare more space for label runs
 
 Pairs with the [`Edge label position` pitfall](../../typst-diagrams/references/fletcher-pitfalls.md) — vertical stacking is one of the structural fixes when labels exceed available segment length.
+
+## Convergent-edges tree (N sources → 1 target via shared trunk)
+
+When N sources share an identical relationship to a single target — N implementations of an interface, N call sites delegating to a shared dependency, N sub-types inheriting from a parent — drawing N independent diagonal edges fans into a tangle that obscures the relationship rather than showing it. Replace with N orthogonal edges that share a *trunk* segment near the target: each edge takes a 4-vertex path (source → leg → rail → trunk → target) and the trunk plus the inner part of the rail overlap pixel-for-pixel across edges, rendering as one tree branching out to N leaves.
+
+```typst
+// 4 sources at row 1 (cols 0..3); 1 target at row 0 col 1.5
+// Each edge: source → up to rail at row 0.5 → along rail to col 1.5 → up trunk to target
+edge((0, 1), (0, 0.5), (1.5, 0.5), (1.5, 0), "-->", lbl("implements"),
+  label-pos: 0.85, label-fill: palette.surface, stroke: edge-stroke)
+edge((1, 1), (1, 0.5), (1.5, 0.5), (1.5, 0), "-->", stroke: edge-stroke)
+edge((2, 1), (2, 0.5), (1.5, 0.5), (1.5, 0), "-->", stroke: edge-stroke)
+edge((3, 1), (3, 0.5), (1.5, 0.5), (1.5, 0), "-->", stroke: edge-stroke)
+```
+
+The shared `(1.5, 0.5) → (1.5, 0)` trunk segment is drawn 4 times by 4 edges; they overlap pixel-for-pixel and read as one line. The rail at row 0.5 overlaps partially across edges — segments closer to the trunk overlap, segments closer to a leg are unique to one edge. Four arrowheads stack at the target's boundary and read as one. Only the leftmost edge carries the shared label; with `label-pos: 0.85` it lands on the trunk where the four edges merge — exactly the point that makes "branches into one trunk" legible.
+
+Tune `label-pos` based on segment lengths: the trunk is segment 3 of 3, so values near `1.0` land on the trunk near the target end, while `0.7`–`0.85` typically sits mid-trunk for balanced spacing between target and rail. Row spacing matters — when the gap between the source row and target row is small, the trunk + rail are short and the label crowds the target; bump row spacing (`* 1.5`–`* 2.5`) until the trunk has room for the label without hugging the target shape.
+
+The pattern works in either direction (sources above target with trunk going down, or sources below target with trunk going up) and applies to any uniform relationship: `implements`, `delegates to`, `extends`, `subscribes to`, `routes through`. When two such relationships exist between the same source set and different targets — e.g., N types `implements` an interface above AND `delegates to` a shared dependency below — draw two independent trees, each with its own line style (dashed / solid) so they read as distinct relationships sharing the same source set.
+
+## L-shape edges with labels in corner whitespace
+
+When a wide label needs to ride an edge between two cards on the same row (or column) and the gap directly between them is narrower than the label, placing the label mid-edge clips its content. An L-shaped edge route opens an unobstructed *corner* whitespace for the label.
+
+Configure the edge as a 3-vertex polyline that exits the source perpendicular to the source-target axis, runs orthogonally to align with the target, then turns toward the target's edge. The two segments form an L; the label rides whichever segment sits in the cleaner corner.
+
+```typst
+// Source at (0, 0), target at (2, 1). Edge: vertical down then horizontal right (L-shape).
+// Label sits east of the vertical segment, in the corner rectangle between cols 0 and 2.
+edge((0, 0), (0, 1), (2, 1), "->", lbl("modifies state"),
+  label-pos: 0.18, label-side: left, label-fill: palette.surface, stroke: edge-stroke)
+```
+
+`label-pos` controls which segment carries the label. With segment lengths `L1` (vertical) and `L2` (horizontal), `label-pos ≈ L1/(2·(L1+L2))` lands the label mid-vertical; values approaching `1.0` push it onto the horizontal segment. `label-side` then chooses which side of that segment — the rule is "side relative to direction of travel": going *south*, `left` = east; going *north*, `left` = west; going *west*, `left` = south; going *east*, `left` = north. Pick the side that opens onto unoccupied corner whitespace.
+
+Useful when:
+- A wide label exceeds the gap directly between source and target cards
+- One card in the pair is much taller or wider than the other (mid-edge collides with the larger card's body)
+- Multiple cards on the same row force a label into a narrow corridor that clips its text
+
+Trade-off: L-shaped edges read as more deliberate routing than straight edges; reserve for cases where a straight or single-bend edge would clip a label or collide with a card body. Pairs with the [`Edge label position` pitfall](../../typst-diagrams/references/fletcher-pitfalls.md).

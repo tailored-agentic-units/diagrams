@@ -351,6 +351,43 @@ The marker glyph is the only visual difference between marked and unmarked pills
 
 **Pills without markers stay pills, not omissions.** When a discriminator doesn't apply (the attribute is genuinely absent for that capability), render the pill without the marker rather than omitting it from the row entirely. Omission communicates "this capability isn't supported"; a markerless pill communicates "this capability is supported but lacks the discriminating attribute". The two are different signals; choose the one matching reality.
 
+## Operations ledger card
+
+When a focal type has multiple operations (methods, message handlers, request kinds) that all share a similar relationship to the focal type — and the per-operation differences are uniformly *what state they touch* rather than structurally distinct call paths — modeling each operation as its own node with a labeled edge fans into clutter that obscures the focal relationship. Consolidate the group into a single muted *ledger card* with a 2-column grid: signature on the left, effect / role on the right rendered in italic-muted style.
+
+```typst
+let ops-ledger(pos) = node(pos,
+  align(left, stack(dir: ttb, spacing: gap-structured-text,
+    text(size: size-label, weight: "light", fill: palette.ink-muted, style: "italic",
+      "methods — effect on state"),
+    grid(
+      columns: (auto, auto),
+      column-gutter: gap-cell * 1.5,
+      row-gutter: gap-structured-text,
+      raw("Register(name, cfg)"), text(style: "italic", fill: palette.ink-muted, "writes configs"),
+      raw("Replace(name, cfg)"),  text(style: "italic", fill: palette.ink-muted, "writes configs · invalidates cache"),
+      raw("Unregister(name)"),    text(style: "italic", fill: palette.ink-muted, "deletes from both"),
+      raw("List()"),              text(style: "italic", fill: palette.ink-muted, "reads configs"),
+      raw("Capabilities(name)"),  text(style: "italic", fill: palette.ink-muted, "reads configs"),
+    ),
+  )),
+  shape: fletcher.shapes.rect,
+  fill: palette.surface-muted,
+  stroke: stroke-thin + palette.border,
+  inset: pad-inside-shape,
+  corner-radius: radius-shape,
+)
+```
+
+A single labeled edge from the ledger to the focal type then carries an umbrella label (`modifies state`, `dispatches to handlers`, `writes to journal`) covering the whole group. The per-method effects live inside the ledger so the umbrella label's vagueness is offset by the on-card detail.
+
+Useful when:
+- A registry, dispatcher, or aggregate has 4+ operations with uniform read / write / delete semantics
+- One operation in the group warrants its own node + edge (e.g., a structurally distinct cache-miss / fan-out flow) — the ledger consolidates the rest so the diagram's emphasis lands on the structurally distinct case
+- Per-operation labels would converge on the same target with similar text, producing visual repetition
+
+Trade-off: loses the per-operation arrow into the focal type. Use when the per-edge granularity isn't structurally informative — when the diagram's emphasis is on the *one* structurally distinct operation with the rest as context.
+
 ## Snap and layering
 
 `snap: -1` on the container pushes it below the inner nodes. Without it, the container renders on top and obscures the inner content. Background containers always carry `snap: -1`.
