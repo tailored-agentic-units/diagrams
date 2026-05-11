@@ -154,6 +154,29 @@ edge((2, 2), (2, 1), (1, 1), "->", lbl("imports"), ...)                      // 
 
 The same override resolves "labels stack vertically with one inside the diagram" issues on shared-trunk forked edges — set the label side explicitly on whichever branch landed on the wrong side.
 
+**Mirrored L-shapes with the same first-segment direction.** Fletcher's auto `label-side` for a polyline edge resolves against the *first* segment's tangent θ — the auto-rule is `right` when `|θ| ≥ 90°` (vertical) and `left` otherwise. Two mirrored L-shapes that *start* with the same direction (e.g., both go south, then one turns east and the other turns west) auto-resolve to the same `label-side` value — which is correct for one L but inverted relative to the corner of its mirror. The result: one label sits in the open quadrant outside the L's angle, the other crowds against whatever the L is turning toward. Override the mirror's `label-side` to the opposite value:
+
+```typst
+// Provider edge (south → east) — auto picks label-side: right → label sits west of the corner (open NW quadrant).
+edge((1, 1.4), (1, 2.4), (2, 2.4), "->", lbl("Create()"), ...)
+
+// Format edge (south → west, mirror of provider) — auto would *also* pick label-side: right,
+// landing the label west of *its* corner (crowding the central focal node).
+// Override to label-side: left so the label sits east of the corner (open NE quadrant).
+edge((3, 1.4), (3, 2.4), (2, 2.4), "->", lbl("Create()"), label-side: left, ...)
+```
+
+The rule of thumb: `label-side` describes which side relative to *walking the edge from base to tip*, not absolute image-space. For a mirror, walking direction is the same for both first segments, so the "same side" semantically means *opposite* visual positions of the L's corner.
+
+**Center-overlay when both sides are occupied.** When an edge sits between two other labeled edges (e.g., a straight vertical between two diagonals, all converging on a common target), the left and right sides of the centre edge are both visually claimed by the flanking labels. Use `label-side: center` to place the label directly on the line — Fletcher draws the label-fill underneath, breaking the line visually around the label box. Reads as a passive annotation about the edge rather than a sidecar.
+
+```typst
+// cfg flows straight down between two Create() diagonals — left and right are taken;
+// the centre overlay keeps the label readable without crowding either flank.
+edge((2, 1), (2, 3), "->", lbl("cfg (passed through)"),
+  label-side: center, label-fill: palette.surface, ...)
+```
+
 ## Label fill
 
 Use Fletcher's native `label-fill: <color>` parameter on the edge, not a custom `box(fill: surface, ...)` wrapper:

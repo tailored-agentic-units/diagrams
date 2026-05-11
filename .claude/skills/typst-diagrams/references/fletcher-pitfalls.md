@@ -231,6 +231,33 @@ edge(from, to, "->",
 )
 ```
 
+## Wide in-diagram nodes inflate the column they sit in
+
+**Symptom.** A diagram with a clean matrix or grid suddenly renders with a huge left margin (or a huge gap between two adjacent columns at a single row). Inspecting the source shows a "legend" or "caption" node that spans the full width of the diagram, placed at one of the existing column coordinates (e.g., col 0).
+
+**Cause.** Fletcher computes each column's width as the **max** node width at that column across *every* row. A wide node at `(0, last-row)` widens column 0 for all rows above it too — pushing every other column rightward.
+
+**Workaround.** Move supplementary content (legends, captions, footnotes) **outside** the `#diagram(...)` call. They render as page-level Typst content directly below the diagram and don't participate in Fletcher's grid sizing.
+
+```typst
+#diagram(
+  // ... matrix nodes, no wide caption inside ...
+)
+
+#v(tokens.gap-cell)
+#align(center,
+  stack(dir: ltr, spacing: tokens.gap-cell * 1.5,
+    text(size: tokens.size-label, fill: palette.ink-muted, style: "italic", "\u{F00C} supported"),
+    text(size: tokens.size-label, fill: palette.ink-muted, style: "italic", "\u{F469} streaming"),
+    text(size: tokens.size-label, fill: palette.ink-muted, style: "italic", "— not supported"),
+  )
+)
+```
+
+Page-level content auto-sizes against the page's `auto` width, which is itself the diagram's width — so the legend stays narrower than the diagram unless it has wider intrinsic content. The diagram's grid is untouched.
+
+If the legend *must* live inside the diagram (e.g., it needs to be addressable as a fletcher node for `enclose:` membership), give it a fractional coord between two existing columns (e.g., `(2.5, last-row)`) so it expands a *new* column rather than widening an existing one. Other rows have no node at that coord, so the extra column shows up as a small gap rather than a layout shift.
+
 ## Typst SVG always emits fixed pt dimensions
 
 Typst's `compile … out.svg` always emits `<svg viewBox="…" width="900pt" height="1234.5pt" …>`. The fixed dimensions prevent responsive scaling when embedded via `<img width="100%">`; the viewBox carries the aspect ratio. See [render-pipeline](render-pipeline.md) for the strip pattern and the static / responsive distinction.

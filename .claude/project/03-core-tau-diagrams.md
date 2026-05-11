@@ -192,6 +192,14 @@ Voice escalates with fidelity (stakeholder at H1 / Core, IT/DevOps under Operati
 
 Running list. One line per delta: `<layer>: <what changed>`. Filled in between libraries.
 
+### tau capstone (2026-05-11)
+
+Captured during tau capstone authoring (3-tier, no sub-modules; five diagrams: `core/readme.typ`, `operational/readme.typ`, `operational/provider-format-matrix.typ`, `specification/readme.typ`, `specification/registry-composition.typ`). Details in `~/tau/diagrams/.claude/project/checkpoints/03-05-tau.md`.
+
+- **diagram-ingredients skill (`references/edges-and-marks.md`):** Mirrored label placement section extended with the *mirrored L-shapes with same first-segment direction* rule — Fletcher's auto `label-side` resolves against segment 0's tangent θ, so two L-shapes that both start with the same direction (e.g., both go south, one turning east and one turning west) auto-resolve to the same `label-side` value, which is correct for one and inverted for its mirror. Workaround: explicit `label-side` on whichever L is the inverted case. Worked example shipped with the entry referencing the operational `Create()` edges.
+- **diagram-ingredients skill (`references/edges-and-marks.md`):** Added *center-overlay when both sides are occupied* — when an edge sits between two other labeled edges (e.g., a straight vertical between two converging diagonals), set `label-side: center` to place the label on the line itself; Fletcher's `label-fill` masks the line under the label box. Worked example referencing `cfg (passed through)` in the registry-composition diagram.
+- **typst-diagrams skill (`references/fletcher-pitfalls.md`):** Added *Wide in-diagram nodes inflate the column they sit in* — Fletcher computes each column's width as the max node width across every row at that column, so a wide caption/legend node at col 0 widens col 0 for all rows. Workaround: move supplementary content outside the `#diagram(...)` call as page-level Typst content (centered with `#align(center, ...)`), which auto-sizes against the page's `auto` width without participating in the grid. Fallback: fractional coord (e.g., `(2.5, n)`) creates a new column that other rows don't populate.
+
 ### Agent library (2026-05-07)
 
 Captured during agent parent diagrams (no sub-modules). Details in `~/tau/diagrams/.claude/project/checkpoints/03-04-agent.md`.
