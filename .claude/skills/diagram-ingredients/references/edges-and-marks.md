@@ -332,3 +332,16 @@ Useful when:
 - Multiple cards on the same row force a label into a narrow corridor that clips its text
 
 Trade-off: L-shaped edges read as more deliberate routing than straight edges; reserve for cases where a straight or single-bend edge would clip a label or collide with a card body. Pairs with the [`Edge label position` pitfall](../../typst-diagrams/references/fletcher-pitfalls.md).
+
+**Variant: focal card with row-1 siblings.** A common composition has a focal card spanning row 0 and two or more sibling cards on row 1 to its left and right. Diagonal edges from the focal card to each sibling cross awkwardly through the diagram's center and land at the sibling's top-left or top-right corner; an L-shape that *exits the focal card's east or west center face*, traverses row 0's whitespace horizontally, then turns south at the sibling's column to *land on the sibling's top center face* reads as a deliberate outflow channel and aligns the bends symmetrically when both siblings receive the same kind of edge:
+
+```typst
+// StateGraph at (1, 0); siblings State at (0, 1), CheckpointStore at (2, 1).
+// Each L goes horizontal-then-vertical via the row-0 bend point in the sibling's column.
+edge((1, 0), (0, 0), (0, 1), "->", lbl("Execute · Resume flow"),
+  label-pos: 0.3, label-fill: palette.surface, stroke: edge-stroke)
+edge((1, 0), (2, 0), (2, 1), "->", lbl("save every Interval"),
+  label-pos: 0.3, label-side: left, label-fill: palette.surface, stroke: edge-stroke)
+```
+
+`label-pos: 0.3` pins each label to the horizontal segment (the row-0 whitespace) instead of the corner. `label-side` mirrors between the two L's — segment 0 directions are opposite (west vs. east), so the same vertical side (e.g., south) requires opposite `label-side` values on each edge. The pattern reads as a *fan-out from a focal entity into named sibling responsibilities* and pairs naturally with the [Mirrored L-shapes with same first-segment direction](#label-placement) caveat documented above when the two outflows happen to start in the same direction.

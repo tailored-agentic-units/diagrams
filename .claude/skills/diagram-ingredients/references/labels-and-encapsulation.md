@@ -60,6 +60,26 @@ node((0, 0),
 
 A field list past roughly six rows starts competing with the diagram's other content for attention. Decomposing into multiple nodes or moving detailed fields into surrounding prose keeps the diagram itself focused.
 
+### Two-line label for narrow slots
+
+When an edge label has to ride a slot whose horizontal width is narrower than the label's natural length — typically a single-row band between a wide focal card and a smaller sibling card — wrap the label onto two centered lines instead of letting the label clip into the adjacent shapes. The pattern is a vertical stack of two short text runs sharing the same `label-fill` mask:
+
+```typst
+#let lbl-multi(..lines) = stack(dir: ttb, spacing: gap-structured-text / 2,
+  ..lines.pos().map(s => align(center, text(
+    size: label-size, weight: weight-light, fill: palette.ink-muted, style: "italic", s,
+  ))),
+)
+
+// Used on an edge whose horizontal slot is too narrow for the full phrase:
+edge((0, 0), (1, 0), "->", lbl-multi("registered via", "Register()"),
+  label-fill: palette.surface, stroke: edge-stroke)
+```
+
+The two-line slot halves the label's horizontal footprint at the cost of doubling its vertical footprint. Reads as the same single-label idea; the line break is conceptually a soft hyphen, not a sentence break. Phrasing should split on a natural seam (preposition, conjunction, type-name boundary) so each line stands alone as a partial thought.
+
+Useful when the L-shape corner-whitespace route still puts the label in a vertically narrow segment, or when the source-to-target geometry doesn't admit an L-shape (straight edges only, or both segments equally narrow). Reach for it before pushing label-pos around — relocating the label off-center to fit a slot is more brittle than reshaping the label to fit any slot.
+
 ### Divider (header separator)
 
 A horizontal rule between the title block and the body block. Echoes UML class notation without the verbosity:
